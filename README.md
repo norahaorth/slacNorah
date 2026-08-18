@@ -1,4 +1,4 @@
-# Data Analysis of LCLS-SC Quench Data Project 
+# LCLS-SC Quench Data Analysis
 
 This project contains Python tools for analyzing, visualizing, and labeling SRF cavity quench data from the LCLS-SC. It is built using Python and various Python libraries. It includes:
 
