@@ -60,6 +60,7 @@ def calculate_decay_metrics(
     if idx_1 >= len(decay_waveform):
         return -1.0, 1.0
 
+    # Calculate t1 using absolute indices rather than creating a new decay_time slice
     t1 = (
         quench_event_data.fault_time[time_0 + idx_1]
         - quench_event_data.fault_time[time_0]
