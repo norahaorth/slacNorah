@@ -195,6 +195,18 @@ def get_scalar(group, keys):
                 continue
     return None
 
+def read_event_status(group):
+    """Read one event's labeling attrs (checked, label, note, checked_at,
+    needs_specialist) into a plain dict. Shared by app.py (to build the
+    dropdown/status table) and merge_labels.py (to compare labelers)."""
+    attrs = group.attrs
+    return {
+        "checked": bool(attrs.get(CHECKED, False)),
+        "label": attrs.get(LABELS, None),
+        "note": attrs.get(NOTE, None),
+        "checked_at": attrs.get(CHECKED_AT, None),
+        "needs_specialist": bool(attrs.get(NEEDS_SPECIALIST, False)),
+    }
 
 def write_label(file_path, event_path, label, srf_note, needs_specialist):
     """ writing the label, note and checked status to the hdf5 file for each event (cm/cav/date) """
