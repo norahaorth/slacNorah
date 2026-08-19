@@ -54,18 +54,14 @@ def save_filenames_to_txt(quench_files, output_txt):
             f.write(f"{os.path.basename(file)}\n")
 
 
-# --- Main execution block ---
-# TODO: add option to either loop through files or use pkl file.
-# all_data = []
-# for lx in range(4):
-#     quench_files = _get_quench_filenames(lx)
-#     #save_filenames_to_txt(quench_files, output_txt)
-#     print(f"L{lx}: found {len(quench_files)} quench files")
-#     all_data.append(load_quench_data(quench_files))
-# all_data  = pd.concat(all_data, ignore_index=True)
-# all_data.to_pickle(f"all_quench_data.pkl")
+all_data = []
+for lx in range(4):
+    quench_files = _get_quench_filenames(lx)
+    # save_filenames_to_txt(quench_files, output_txt)
+    print(f"L{lx}: found {len(quench_files)} quench files")
+    all_data.append(load_quench_data(quench_files))
 
-all_data = pd.read_pickle(SAVE_DIR + "2026_all_quench_data.pkl")
+all_data = pd.concat(all_data, ignore_index=True)
 
 for lx in range(4):
     lx_tag = f"ACCL_L{lx}B_"
@@ -80,7 +76,7 @@ for lx in range(4):
     with h5py.File(savefile, "w") as h5file:
         for (cm, cav), cav_data in lx_data.groupby(
             ["cryomodule", "cavity"], dropna=False
-        ):
+        ):  # type: ignore
             print(f"Processing CM{cm} CAV{cav}...")
             cm_group = h5file.require_group(f"CM{cm}")
             cav_group = cm_group.require_group(f"CAV{cav}")
