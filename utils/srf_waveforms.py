@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-import re 
 from datetime import datetime
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 # Partial PVs to search for various waveforms
 common_data = [
@@ -18,7 +18,6 @@ common_data = [
     # ('ACQ_SAMP_PERIOD', 'sampling_period'),
 ]
 
-from interface.quench_config import LOADED_Q_CHANGE_FOR_QUENCH
 
 waveform_data = [key for _, key in common_data]
 by_label = {label: pv for pv, label in common_data}
@@ -29,6 +28,7 @@ def all_arrays_same_length(dictionary):
     lengths = (len(arr) for arr in dictionary.values())
     return len(set(lengths)) == 1
 
+
 def parse_h5_event_path(raw_name):
     try:
         path = Path(raw_name).with_suffix("")
@@ -38,6 +38,7 @@ def parse_h5_event_path(raw_name):
         return cm, cav, date_str, time_str
     except (IndexError, ValueError):
         return None
+
 
 def convert_pv_name_plot_string(raw_name):
     """Make a cryomodule and cavity name for plots"""
@@ -51,13 +52,13 @@ def convert_pv_name_plot_string(raw_name):
         except ValueError:
             formatted_date = f"{date_str}_{time_str}"
         return f"Cryomodule {cm}, Cavity {cav} |  {formatted_date}"
-    
-    # Case 2: PV name 
+
+    # Case 2: PV name
     cm, cav = get_cm_cav_num_from_pv(raw_name)
 
     if cm and cav:
-        return f"cryomodule {cm}, cavity {cav}" 
-         
+        return f"cryomodule {cm}, cavity {cav}"
+
     print(f"Warning: Could not parse PV name: {raw_name}")
     return raw_name
 
@@ -75,7 +76,7 @@ def get_cm_cav_num_from_pv(name):
             print(f"Error parsing h5 file path: {name}. Exception: {e}")
             return None, None
 
-    # Case 2: PV name (ACCL:L3B:3180) 
+    # Case 2: PV name (ACCL:L3B:3180)
     pv_parts = name.split(":")
     try:
         cav_num = pv_parts[2][2]
@@ -163,8 +164,8 @@ def validate_quench_lisa(quench_data):
     - Trim the waveform to start at t = 0
     - Trim the tail once the amplitude is < 0.002
     - Fit ln(A0/A(t)) vs. time to a line; the slope gives the decay rate and loaded Q = (pi * frequency)/ slope
-    - Suggest Real if the loaded Q is < (LOADED_Q_CHANGE_FOR_QUENCH * saved_q_loaded), otherwise suggest False 
-   
+    - Suggest Real if the loaded Q is < (LOADED_Q_CHANGE_FOR_QUENCH * saved_q_loaded), otherwise suggest False
+
     https://education.molssi.org/python-data-analysis/03-data-fitting/index.html
 
     """
@@ -238,3 +239,33 @@ def validate_quench_lisa(quench_data):
     is_real = loaded_q < thresh_for_quench
     return {"is_real": is_real, "loaded_q": loaded_q, "other_issue": other}
 
+
+# Plots cavity, forward, reverse, and decay waveforms on the same graph.
+def plot_quench_waveforms(single_quench_data, save_name="quench_plot.png"):
+    line_styles = {
+        "fault_waveform": {"color": "indigo", "linestyle": "-", "linewidth": 3},
+        "forward_power": {"color": "green", "marker": "o"},
+        "reverse_power": {"color": "orange", "marker": "x"},
+        "decay_reference": {"color": "darkcyan", "linestyle": "--", "linewidth": 3},
+    }
+
+    plt.figure(figsize=(6.5, 4))
+    plt.tick_params(axis="both", which="major", labelsize=14)
+
+    time_axis = single_quench_data.get("fault_time")
+
+    for key, data in single_quench_data.items():
+        if key in line_styles:
+            style = line_styles.get(key, {})
+            plt.plot(time_axis, data, label=key.replace("_", " ").title(), **style)
+
+    plt.xlabel("Time (s)", size=14)
+    plt.ylabel("Amplitude (MV)", size=14)
+    plt.title("Cavity Quench Waveforms", size=16)
+    plt.legend(fontsize=12)
+    plt.tight_layout()
+    plt.xlim(-0.02, 0.06)
+
+    plt.savefig(save_name, dpi=300)
+    print(f"Plot saved as {save_name}")
+    plt.show()
