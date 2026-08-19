@@ -82,7 +82,7 @@ def main() -> None:
     events_iterator = load_quench_events(target_files)
     prediction_results = run_classification(events_iterator)
     labeled_file_path = (
-        Path(DATA_DIR) / "quench_data_L0_labeled.h5"
+        Path(DATA_DIR) / "quench_data_L0.h5"
     )  # File path of labeled data to be used for comparison
     compare_classification(prediction_results, labeled_file_path)
 
