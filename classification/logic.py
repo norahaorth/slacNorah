@@ -1,21 +1,7 @@
 import numpy as np
-from numpy.typing import NDArray
 from enum import Enum
-from typing import Optional
-from dataclasses import dataclass
-
-
-@dataclass
-class QuenchData:
-    fault_time: NDArray[np.float64]
-    fault_waveform: NDArray[np.float64]
-    forward_power: NDArray[np.float64]
-    forward_time: NDArray[np.float64]
-    reverse_power: NDArray[np.float64]
-    reverse_time: NDArray[np.float64]
-    decay_reference: Optional[NDArray[np.float64]] = None
-    frequency: float = 1300000000.0
-    saved_q_loaded: float = 40000000.0
+from utils.h5_load_data import QuenchData
+import streamlit as st
 
 
 class QuenchStatus(Enum):

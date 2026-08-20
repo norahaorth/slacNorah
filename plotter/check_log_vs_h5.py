@@ -15,7 +15,7 @@ from collections import defaultdict
 
 import pandas as pd
 
-from utils.quench_data_summary import load_quench_events
+from utils.h5_load_data import load_quench_events
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))

@@ -3,7 +3,7 @@ HDF5 Plotter main function
 """
 
 from plotter.plot_data import plot_data
-from utils.load_data import load_data
+from utils.h5_load_data import build_plotter_bundle
 
 PLOTS: dict[str, bool] = {
     "box_real_slice_cm": True,
@@ -25,7 +25,7 @@ PLOTS: dict[str, bool] = {
 
 
 def main():
-    config = load_data()
+    config = build_plotter_bundle()
     plot_data(PLOTS, config)
 
 
