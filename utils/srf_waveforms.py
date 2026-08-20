@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from dataclasses import asdict
-from utils.config import DATA_DIR
+from utils.config import IMG_DIR
 
 
 def validate_quench_lisa(quench_data):
@@ -104,7 +104,7 @@ def plot_quench_waveforms(single_quench_data, save_name="quench_plot.png"):
     for key, data in data_dict.items():
         if key in line_styles and data is not None and len(data) > 0:
             style = line_styles.get(key, {})
-            plt.plot(time_axis, data, label=key.replace("_", " ").title(), **style) # type: ignore
+            plt.plot(time_axis, data, label=key.replace("_", " ").title(), **style)  # type: ignore
 
     plt.xlabel("Time (s)", size=14)
     plt.ylabel("Amplitude (MV)", size=14)
@@ -113,11 +113,10 @@ def plot_quench_waveforms(single_quench_data, save_name="quench_plot.png"):
     plt.tight_layout()
     plt.xlim(-0.02, 0.06)
 
-    # Route the save path to DATA_DIR
-    save_path = os.path.join(DATA_DIR, save_name)
+    save_path = os.path.join(IMG_DIR, save_name)
     plt.savefig(save_path, dpi=300)
-    print(f"Plot saved successfully to {save_path}")
-    plt.show()
+    print("Plot saved successfully")
+    plt.close()
 
 
 if __name__ == "__main__":
@@ -135,12 +134,13 @@ if __name__ == "__main__":
         event_id, filename, quench_data = next(events_iterator)
         print(f"Testing event: {event_id} from {filename}")
 
-        # Run Lisa's math
         result = validate_quench_lisa(quench_data)
         print(f"Is Real?   {result['is_real']}")
 
-        # Actually draw and save the plot!
         plot_filename = f"plot_{event_id.replace('/', '_')}.png"
         plot_quench_waveforms(quench_data, save_name=plot_filename)
 
     except StopIteration:
+        print("Test failed:")
+    except Exception:
+        print("Test failed")
