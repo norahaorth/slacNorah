@@ -44,6 +44,16 @@ def extract_quench_data(group: h5py.Group, load_waveforms: bool = True) -> Quenc
                 val = val.decode("utf-8")
             data_dict[field.name] = val
 
+    raw_label = group.attrs.get("quench_labels", "unknown")
+    if isinstance(raw_label, np.ndarray) and raw_label.size > 0:
+        raw_label = raw_label[0]
+    if isinstance(raw_label, bytes):
+        raw_label = raw_label.decode("utf-8")
+
+    clean_label = str(raw_label).strip("[]\"' ").lower()
+
+    data_dict["quench_classification"] = clean_label
+
     if "frequency" not in data_dict and "FREQ" in group.attrs:
         data_dict["frequency"] = float(group.attrs["FREQ"])
 
@@ -117,6 +127,9 @@ def _mp_keys(source="all"):
 
 
 def mp_events(events, keep=False, source="all"):
+    if events.empty:
+        return events
+
     keys = _mp_keys(source=source)
     day = events["date"].str[:8]
     in_mp = [k in keys for k in zip(events["cm"], events["cav"], day)]
@@ -139,12 +152,13 @@ def build_plotter_bundle(
             {
                 "cm": cm.upper(),
                 "cav": cav,
+                "date": timestamp_str,
                 "year": str(dt.year),
                 "month": str(dt.month),
                 "day": str(dt.day),
                 "classification": quench_data.quench_classification,
                 "is_real": quench_data.quench_classification == "real",
-                "is_mp": bool(quench_data.is_mp),
+                "is_mp": bool(getattr(quench_data, "is_mp", False)),
             }
         )
 

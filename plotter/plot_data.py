@@ -160,18 +160,21 @@ def plot_data(PLOTS: dict[str, bool], data_bundle: DataBundle):
     cm35 = events2025[events2025["cm"] == "CM35"]
     cavity_events = cm34
     if PLOTS["bar_per_cavity"]:
-        years = sorted(cavity_events["year"].unique())
-        yr_label = years[0] if len(years) == 1 else f"{years[0]}-{years[-1]}"
-        for cm in cavity_events["cm"].unique():
-            bar_quenches_per_cavity(
-                cavity_events,
-                cm,
-                title=f"{cm} ({yr_label})",
-                figsize=(7, 6),
-                save_path=os.path.join(
-                    IMG_DIR, f"quenches_per_cavity_{cm}_{yr_label}.png"
-                ),
-            )
+        if cavity_events.empty:
+            print("Skipping bar_per_cavity: No events found for this filter.")
+        else:
+            years = sorted(cavity_events["year"].unique())
+            yr_label = years[0] if len(years) == 1 else f"{years[0]}-{years[-1]}"
+            for cm in cavity_events["cm"].unique():
+                bar_quenches_per_cavity(
+                    cavity_events,
+                    cm,
+                    title=f"{cm} ({yr_label})",
+                    figsize=(7, 6),
+                    save_path=os.path.join(
+                        IMG_DIR, f"quenches_per_cavity_{cm}_{yr_label}.png"
+                    ),
+                )
 
     # Monthly bar for one (cm, cav, year)
     if PLOTS["bar_per_month"]:
