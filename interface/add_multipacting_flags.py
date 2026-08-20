@@ -3,7 +3,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import h5py
-from utils.srf_waveforms import parse_h5_event_path
+from utils.label_helpers import parse_h5_event_path
 from utils.quench_data_summary import load_csv
 from utils.h5_reader import find_event_groups
 from utils.label_helpers import norm_cm, norm_cav

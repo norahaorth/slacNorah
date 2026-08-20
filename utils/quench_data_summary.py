@@ -192,9 +192,9 @@ def load_quench_events(source):
     for path in _resolve_paths(source):
         with h5py.File(path, "r") as f:
             for cm in f:  # "CM01"
-                for cav in f[cm]:  # "CAV1"
-                    for ts in f[cm][cav]:  # "YYYYMMDD_HHMMSS"
-                        attrs = f[cm][cav][ts].attrs
+                for cav in f[cm]:  # type: ignore # "CAV1"
+                    for ts in f[cm][cav]:  # type: ignore # "YYYYMMDD_HHMMSS"
+                        attrs = f[cm][cav][ts].attrs  # type: ignore
                         rows.append(
                             (
                                 f"{path}::{cm}/{cav}/{ts}",
@@ -230,15 +230,15 @@ def load_quench_waveforms(events, source):
             for cm in f:
                 if cm not in {w[0] for w in wanted}:
                     continue
-                for cav in f[cm]:
+                for cav in f[cm]:  # type: ignore
                     if (cm, cav) not in {(w[0], w[1]) for w in wanted}:
                         continue
-                    for ts in f[cm][cav]:
+                    for ts in f[cm][cav]:  # type: ignore
                         if (cm, cav, ts) not in wanted:
                             continue
-                        g = f[cm][cav][ts]
+                        g = f[cm][cav][ts]  # type: ignore
                         out[f"{cm}/{cav}/{ts}"] = {
-                            "datasets": {k: g[k][...] for k in g.keys()},
+                            "datasets": {k: g[k][...] for k in g.keys()},  # type: ignore
                             "attrs": {k: g.attrs[k] for k in g.attrs.keys()},
                         }
     return out
@@ -258,7 +258,7 @@ def load_csv(path):
         try:
             return pd.read_csv(path)
         except Exception:
-            return pd.read_csv(path, delim_whitespace=True)
+            return pd.read_csv(path, delim_whitespace=True)  # type: ignore
     else:
         raise ValueError(f"Error with file type: {path}")
 

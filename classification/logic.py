@@ -1,7 +1,22 @@
 import numpy as np
+from numpy.typing import NDArray
 from enum import Enum
-from utils.h5_load_data import QuenchData
+from typing import Optional
+from dataclasses import dataclass
 import streamlit as st
+
+
+@dataclass
+class QuenchData:
+    fault_time: NDArray[np.float64]
+    fault_waveform: NDArray[np.float64]
+    forward_power: NDArray[np.float64]
+    forward_time: NDArray[np.float64]
+    reverse_power: NDArray[np.float64]
+    reverse_time: NDArray[np.float64]
+    decay_reference: Optional[NDArray[np.float64]] = None
+    frequency: float = 1300000000.0
+    saved_q_loaded: float = 40000000.0
 
 
 class QuenchStatus(Enum):
@@ -23,8 +38,11 @@ def is_overall_average_sufficient(quench_event_data: QuenchData) -> bool:
 
 # Evaluates the pre-quench window to confirm the cavity is on
 def pre_quench_amplitude(quench_event_data: QuenchData, time_0: int) -> bool:
-    avg_waveform = np.mean(quench_event_data.fault_waveform[:time_0])
-    avg_fwd_power = np.mean(quench_event_data.forward_power[:time_0])
+    pre_quench_window = quench_event_data.fault_waveform[0:time_0]
+    avg_waveform = np.mean(pre_quench_window)
+
+    pre_quench_fwd_power = quench_event_data.forward_power[0:time_0]
+    avg_fwd_power = np.mean(pre_quench_fwd_power)
 
     total_avg = (avg_waveform + avg_fwd_power) / 2.0
 
@@ -36,21 +54,20 @@ def calculate_decay_metrics(
     quench_event_data: QuenchData, time_0: int
 ) -> tuple[float, float]:
     decay_waveform = quench_event_data.fault_waveform[time_0:]
+    decay_time = quench_event_data.fault_time[time_0:]
 
     if len(decay_waveform) == 0:
         return -1.0, 1.0
 
-    target_1 = decay_waveform[0] / np.e
+    a0 = decay_waveform[0]
+    target_1 = a0 / np.e
+
     idx_1 = np.searchsorted(-decay_waveform, -target_1)
 
     if idx_1 >= len(decay_waveform):
         return -1.0, 1.0
 
-    # Calculate t1 using absolute indices rather than creating a new decay_time slice
-    t1 = (
-        quench_event_data.fault_time[time_0 + idx_1]
-        - quench_event_data.fault_time[time_0]
-    )
+    t1 = decay_time[idx_1] - decay_time[0]
 
     expected_tau = quench_event_data.saved_q_loaded / (
         np.pi * quench_event_data.frequency
@@ -83,9 +100,8 @@ def classify(event_data: QuenchData) -> QuenchStatus:
     return QuenchStatus.other
 
 
-# Computes the classification suggestion using the classify system
+# Compute the classification suggestion using the classify system
 def compute_suggestion(signal_data, frequency, saved_q_loaded):
-
     if "fault_waveform" not in signal_data:
         return None
 

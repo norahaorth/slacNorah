@@ -29,18 +29,22 @@ try:
 except ImportError:
     pyperclip_imported = False
 
-rescale_image = b'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsM' \
-                b'AAA7DAcdvqGQAAAFRSURBVGhD7ZeBrsMgCEW1///PTpq6KLFWFLBsnqQvS+zgXq+yPO8uvPfh+lgQQjjfqa231oCZ9d7vHvDn7q' \
-                b'U3kzQfFsUnQPuZgGWiiTKBdLbeCtZrPoFtYPPvmJ9CqgZwrztaGnCNPYUoSKSrngC3icKA1gWe6YO/qyIY83SZKQa/L/ZOiBFyQ' \
-                b'T19WgaqU2ileMpu1xD9h6ZX/IwJsSlE3flRE7F2WXxmN2r0iKeA64n+DnCLryGWwJN4WOfoJZJAj/jr4zSxFm8CFPEjvXB91gQo' \
-                b'4rkgGQABdyKexEsxlAAWu0o8MHyEkuiV4oGpO7BaPMB6iTXEQ4/8YTOgIT4ByaeHzUDtOEmA+7AeIS0TOawGAG0T7Aa0iRtW7pj' \
-                b'kZeTohWuYM4Axf4TMGYAU82cnsJrfG6OapClU09Bay7F/hCTnfguOvlDjTEDbBJd455z7APTz9WNZa4ZSAAAAAElFTkSuQmCC'
+rescale_image = (
+    b"iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsM"
+    b"AAA7DAcdvqGQAAAFRSURBVGhD7ZeBrsMgCEW1///PTpq6KLFWFLBsnqQvS+zgXq+yPO8uvPfh+lgQQjjfqa231oCZ9d7vHvDn7q"
+    b"U3kzQfFsUnQPuZgGWiiTKBdLbeCtZrPoFtYPPvmJ9CqgZwrztaGnCNPYUoSKSrngC3icKA1gWe6YO/qyIY83SZKQa/L/ZOiBFyQ"
+    b"T19WgaqU2ileMpu1xD9h6ZX/IwJsSlE3flRE7F2WXxmN2r0iKeA64n+DnCLryGWwJN4WOfoJZJAj/jr4zSxFm8CFPEjvXB91gQo"
+    b"4rkgGQABdyKexEsxlAAWu0o8MHyEkuiV4oGpO7BaPMB6iTXEQ4/8YTOgIT4ByaeHzUDtOEmA+7AeIS0TOawGAG0T7Aa0iRtW7pj"
+    b"kZeTohWuYM4Axf4TMGYAU82cnsJrfG6OapClU09Bay7F/hCTnfguOvlDjTEDbBJd455z7APTz9WNZa4ZSAAAAAElFTkSuQmCC"
+)
 
-popup_image = b'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsM' \
-              b'AAA7DAcdvqGQAAADGSURBVGhD7dfrCsIwDAXg6vs/sTDUQQKxnJVuzZoUz/cniCwmvc5CRER/7SHRekucCdXR5SlxWWwg2vINIP' \
-              b'smnrWRh3+LSygaG4jGBqIt3wAy8x4Y1nobvfyG+HXnAPzUxT0QjQ1k5HEKeeSowZzLz4D3n3rNpzlGjuIazJlpBuASiXKlGH2mf' \
-              b'k4/o+9SzYBdGrbopmybGDXRlPEUOrXxMzbQNfIqWwOo+JfEqfZCTo1kB5jT86KxvIu30l5kRzaJRERElVI+zs8oDue1LXkAAAAA' \
-              b'SUVORK5CYII='
+popup_image = (
+    b"iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsM"
+    b"AAA7DAcdvqGQAAADGSURBVGhD7dfrCsIwDAXg6vs/sTDUQQKxnJVuzZoUz/cniCwmvc5CRER/7SHRekucCdXR5SlxWWwg2vINIP"
+    b"smnrWRh3+LSygaG4jGBqIt3wAy8x4Y1nobvfyG+HXnAPzUxT0QjQ1k5HEKeeSowZzLz4D3n3rNpzlGjuIazJlpBuASiXKlGH2mf"
+    b"k4/o+9SzYBdGrbopmybGDXRlPEUOrXxMzbQNfIqWwOo+JfEqfZCTo1kB5jT86KxvIu30l5kRzaJRERElVI+zs8oDue1LXkAAAAA"
+    b"SUVORK5CYII="
+)
 
 types_map = {
     "ACQ_FLT_TS": "ts1",
@@ -69,7 +73,7 @@ types_map = {
     "CTRL:FLTLIMS_QL": "array",
     "CTRL:FLTLIMS_QH": "array",
     "DECAYREFWF": "array",
-    "PWRDISSWF" : "array"
+    "PWRDISSWF": "array",
 }
 
 
@@ -99,52 +103,68 @@ def parse_line(line, signal_prefix, line_number):
     result = ParserResult()
 
     if not elements[0].startswith(signal_prefix):
-        showwarning(title="Malformed file", message=f"Line {line_number} does not start with the cavity name.")
+        showwarning(
+            title="Malformed file",
+            message=f"Line {line_number} does not start with the cavity name.",
+        )
         return None
 
-    result.signal_name = elements[0][len(signal_prefix):]
+    result.signal_name = elements[0][len(signal_prefix) :]
 
     # some old files could contain values for limits that are very long arrays
     # this if condition makes it support the single value while also keeping backward compatibility
-    if (result.signal_name == "CTRL:FLTLIMS_IL" or result.signal_name == "CTRL:FLTLIMS_IH" or
-        result.signal_name == "CTRL:FLTLIMS_QL" or result.signal_name == "CTRL:FLTLIMS_QH") and len(elements) == 3:
-        result.value = [float(elements[2])]
+    if (
+        result.signal_name == "CTRL:FLTLIMS_IL"
+        or result.signal_name == "CTRL:FLTLIMS_IH"
+        or result.signal_name == "CTRL:FLTLIMS_QL"
+        or result.signal_name == "CTRL:FLTLIMS_QH"
+    ) and len(elements) == 3:
+        result.value = [float(elements[2])]  # type: ignore
     elif types_map.get(result.signal_name) == "array":
         if len(elements) < 10:
-            showwarning(title="Malformed file",
-                        message=f"{elements[0]} should be an array but contains only {len(elements) - 2} values.")
+            showwarning(
+                title="Malformed file",
+                message=f"{elements[0]} should be an array but contains only {len(elements) - 2} values.",
+            )
             result.value = None
         else:
             values = np.array(elements[2:], dtype=np.float32)
             result.value = values
     elif types_map.get(result.signal_name) == "ts1":
         if len(elements) != 6:
-            showwarning(title="Malformed file", message=f"{elements[0]} should be a date of type %b %d %Y %H:%M:%S.")
+            showwarning(
+                title="Malformed file",
+                message=f"{elements[0]} should be a date of type %b %d %Y %H:%M:%S.",
+            )
             result.value = None
         else:
             date = " ".join(elements[2:]).strip()
             try:
-                date_obj = datetime.datetime.strptime(date, '%b %d %Y %H:%M:%S')
+                date_obj = datetime.datetime.strptime(date, "%b %d %Y %H:%M:%S")
             except ValueError:
-                showwarning(title="Malformed file",
-                            message=f"{elements[0]} should be a date of type %b %d %Y %H:%M:%S.")
+                showwarning(
+                    title="Malformed file",
+                    message=f"{elements[0]} should be a date of type %b %d %Y %H:%M:%S.",
+                )
                 date_obj = None
-            result.value = date_obj
+            result.value = date_obj  # type: ignore
     elif types_map.get(result.signal_name) == "ts2":
         if len(elements) < 3:
             result.value = None
         else:
             date = elements[2]
             try:
-                date_obj = datetime.datetime.strptime(date, '%Y-%m-%d-%H:%M:%S')
+                date_obj = datetime.datetime.strptime(date, "%Y-%m-%d-%H:%M:%S")
             except ValueError:
-                showwarning(title="Malformed file",
-                            message=f"{elements[0]} should be a date of type %Y-%m-%d-%H:%M:%S.")
+                showwarning(
+                    title="Malformed file",
+                    message=f"{elements[0]} should be a date of type %Y-%m-%d-%H:%M:%S.",
+                )
                 date_obj = None
-            result.value = date_obj
+            result.value = date_obj  # type: ignore
     else:
         if len(elements) == 3:
-            result.value = float(elements[2])
+            result.value = float(elements[2])  # type: ignore
         elif len(elements) == 2:
             # no value available
             result.value = None
@@ -161,7 +181,9 @@ def parse_file(filename):
         line = file.readline().strip()
         result = parse_comment(line)
         if result is None:
-            showwarning(title="File not supported", message=f"{filename} is not supported.")
+            showwarning(
+                title="File not supported", message=f"{filename} is not supported."
+            )
             return None
 
         signal_prefix = result[0]
@@ -178,14 +200,19 @@ def parse_file(filename):
             if result is not None:
                 data[result.signal_name] = result.value
             else:
-                showwarning(title="File not supported", message=f"{filename} is not supported.")
+                showwarning(
+                    title="File not supported", message=f"{filename} is not supported."
+                )
                 return None
 
     x_axis1 = data.get("CAV:FLTTWF")
     x_axis2 = data.get("FWD:FLTTWF")
     x_axis3 = data.get("REV:FLTTWF")
-    if not (np.array_equal(x_axis1, x_axis2) and np.array_equal(x_axis2, x_axis3)):
-        showwarning(title="Malformed file", message="X axis is not equal for cavity, forward and reverse signals.")
+    if not (np.array_equal(x_axis1, x_axis2) and np.array_equal(x_axis2, x_axis3)):  # type: ignore
+        showwarning(
+            title="Malformed file",
+            message="X axis is not equal for cavity, forward and reverse signals.",
+        )
         return None
 
     sanitize_data(data, signal_prefix)
@@ -196,12 +223,17 @@ def parse_file(filename):
 
 
 def sanitize_data(data, signal_prefix):
-    elements = ["CTRL:FLTLIMS_IL", "CTRL:FLTLIMS_IH", "CTRL:FLTLIMS_QL", "CTRL:FLTLIMS_QH"]
+    elements = [
+        "CTRL:FLTLIMS_IL",
+        "CTRL:FLTLIMS_IH",
+        "CTRL:FLTLIMS_QL",
+        "CTRL:FLTLIMS_QH",
+    ]
 
     for element in elements:
         if data.get(element) is not None:
             if len(data["CAV:FLTTWF"]) < len(data[element]):
-                data[element] = data[element][:len(data["CAV:FLTTWF"])]
+                data[element] = data[element][: len(data["CAV:FLTTWF"])]
             elif len(data["CAV:FLTTWF"]) < len(data[element]):
                 missing_elements = len(data["CAV:FLTTWF"]) - len(data[element])
                 missing_elements_list = data[element][-1] * missing_elements
@@ -255,11 +287,13 @@ def calculate_quench_related_signals(data):
     data["QUENCH:SYSTEM"] = fwd_p - rev_p - cav_p
     data["QUENCH:WAVEGUIDE"] = fwd_p - rev_p
     if data.get("QUENCH_THRESH") is not None:
-        data["QUENCH:THRESHOLD"] = np.ones(len(data["QUENCH:FLTTWF"])) * data["QUENCH_THRESH"]
+        data["QUENCH:THRESHOLD"] = (
+            np.ones(len(data["QUENCH:FLTTWF"])) * data["QUENCH_THRESH"]
+        )
 
 
 class Tooltip:
-    '''
+    """
     It creates a tooltip for a given widget as the mouse goes on it.
 
     see:
@@ -287,9 +321,18 @@ class Tooltip:
       Tested on Ubuntu 16.04/16.10, running Python 3.5.2
 
     TODO: themes styles support
-    '''
+    """
 
-    def __init__(self, widget, *, bg='#FFFFEA', pad=(5, 3, 5, 3), text='widget info', waittime=400, wraplength=250):
+    def __init__(
+        self,
+        widget,
+        *,
+        bg="#FFFFEA",
+        pad=(5, 3, 5, 3),
+        text="widget info",
+        waittime=400,
+        wraplength=250,
+    ):
         self.waittime = waittime  # in miliseconds, originally 500
         self.wraplength = wraplength  # in pixels, originally 180
         self.widget = widget
@@ -323,7 +366,10 @@ class Tooltip:
         def tip_pos_calculator(widget, label, *, tip_delta=(10, 5), pad=(5, 3, 5, 3)):
             w = widget
 
-            width, height = (pad[0] + label.winfo_reqwidth() + pad[2], pad[1] + label.winfo_reqheight() + pad[3])
+            width, height = (
+                pad[0] + label.winfo_reqwidth() + pad[2],
+                pad[1] + label.winfo_reqheight() + pad[3],
+            )
 
             mouse_x, mouse_y = w.winfo_pointerxy()
 
@@ -337,7 +383,6 @@ class Tooltip:
             offscreen = (x_delta, y_delta) != (0, 0)
 
             if offscreen:
-
                 if x_delta:
                     x1 = mouse_x - tip_delta[0] - width
 
@@ -368,8 +413,15 @@ class Tooltip:
         self.tw.wm_overrideredirect(True)
 
         win = tk.Frame(self.tw, background=bg, borderwidth=0)
-        label = tk.Label(win, text=self.text, justify=tk.LEFT, background=bg, relief=tk.SOLID, borderwidth=0,
-                         wraplength=self.wraplength)
+        label = tk.Label(
+            win,
+            text=self.text,
+            justify=tk.LEFT,
+            background=bg,
+            relief=tk.SOLID,
+            borderwidth=0,
+            wraplength=self.wraplength,
+        )
 
         label.grid(padx=(pad[0], pad[2]), pady=(pad[1], pad[3]), sticky=tk.NSEW)
         win.grid()
@@ -391,23 +443,49 @@ class NavigationToolbar(NavigationToolbar2Tk):
     signal_name = None
     log_content = None
 
-    def __init__(self, canvas, window, *, pack_toolbar=True, vertical_toolbar=False, background_color=None,
-                 popup_button=True):
+    def __init__(
+        self,
+        canvas,
+        window,
+        *,
+        pack_toolbar=True,
+        vertical_toolbar=False,
+        background_color=None,
+        popup_button=True,
+    ):
         # Avoid using self.window (prefer self.canvas.get_tk_widget().master),
         # so that Tool implementations can reuse the methods.
         self.master = window
         self.vertical_toolbar = vertical_toolbar
 
-        tk.Frame.__init__(self, master=window, borderwidth=2, width=int(canvas.figure.bbox.width), height=50,
-                          bg=background_color)
+        tk.Frame.__init__(
+            self,
+            master=window,
+            borderwidth=2,
+            width=int(canvas.figure.bbox.width),
+            height=50,
+            bg=background_color,
+        )  # type: ignore
 
         self._buttons = {}
 
-        self.rescale_figure = lambda: (rescale_figure(canvas.figure.axes, self.log_content, self.ui_elements,
-                                                      self.signal_name), canvas.draw())
-        self.home = lambda: (reset_figure_scale(canvas.figure.axes, self.home_scaling_factors), canvas.draw())
-        self.popup_figure = lambda: create_popup_figure(self.ui_elements, canvas.figure, self.log_content,
-                                                        self.signal_name, self.home_scaling_factors)
+        self.rescale_figure = lambda: (
+            rescale_figure(
+                canvas.figure.axes, self.log_content, self.ui_elements, self.signal_name
+            ),
+            canvas.draw(),
+        )
+        self.home = lambda: (
+            reset_figure_scale(canvas.figure.axes, self.home_scaling_factors),
+            canvas.draw(),
+        )  # type: ignore
+        self.popup_figure = lambda: create_popup_figure(
+            self.ui_elements,
+            canvas.figure,
+            self.log_content,
+            self.signal_name,
+            self.home_scaling_factors,
+        )
 
         self.new_toolitems = []
         for item in self.toolitems:
@@ -416,19 +494,43 @@ class NavigationToolbar(NavigationToolbar2Tk):
             self.new_toolitems.append(item + (None,))
             if item.count("Forward") == 1:
                 self.new_toolitems.append(
-                    ("Rescale", "Rescale to the visible lines", "home", "rescale_figure", rescale_image))
+                    (
+                        "Rescale",
+                        "Rescale to the visible lines",
+                        "home",
+                        "rescale_figure",
+                        rescale_image,
+                    )
+                )
             if item.count("Save") == 1 and popup_button:
                 self.new_toolitems.append(
-                    ("Popup", "Create a new window for this plot", "home", "popup_figure", popup_image))
+                    (
+                        "Popup",
+                        "Create a new window for this plot",
+                        "home",
+                        "popup_figure",
+                        popup_image,
+                    )
+                )
 
-        for text, tooltip_text, image_file, callback, image_string in self.new_toolitems:
+        for (
+            text,
+            tooltip_text,
+            image_file,
+            callback,
+            image_string,
+        ) in self.new_toolitems:
             if text is None:
                 # Add a spacer; return value is unused.
                 self._Spacer()
             else:
                 self._buttons[text] = button = self._Button(
-                    text, str(cbook._get_data_path(f"images/{image_file}.png")), toggle=callback in ["zoom", "pan"],
-                    command=getattr(self, callback), image_string=image_string)
+                    text,
+                    str(cbook._get_data_path(f"images/{image_file}.png")),
+                    toggle=callback in ["zoom", "pan"],
+                    command=getattr(self, callback),
+                    image_string=image_string,
+                )
                 if tooltip_text is not None:
                     Tooltip(button, text=tooltip_text)
 
@@ -438,16 +540,24 @@ class NavigationToolbar(NavigationToolbar2Tk):
         # lines high. Otherwise the canvas gets redrawn as the mouse hovers
         # over images because those use two-line messages which resize the
         # toolbar.
-        label = tk.Label(master=self, font=self._label_font, text='\N{NO-BREAK SPACE}\n\N{NO-BREAK SPACE}',
-                         bg=background_color)
+        label = tk.Label(
+            master=self,
+            font=self._label_font,
+            text="\N{NO-BREAK SPACE}\n\N{NO-BREAK SPACE}",
+            bg=background_color,
+        )  # type: ignore
         label.pack(side=tk.RIGHT)
 
         self.message = tk.StringVar(master=self)
-        self._message_label = tk.Label(master=self, font=self._label_font, textvariable=self.message,
-                                       bg=background_color)
+        self._message_label = tk.Label(
+            master=self,
+            font=self._label_font,
+            textvariable=self.message,
+            bg=background_color,
+        )  # type: ignore
         self._message_label.pack(side=tk.RIGHT)
 
-        matplotlib.backend_bases.NavigationToolbar2.__init__(self, canvas)
+        matplotlib.backend_bases.NavigationToolbar2.__init__(self, canvas)  # type: ignore
         if pack_toolbar:
             self.pack(side=tk.BOTTOM, fill=tk.X)
 
@@ -456,10 +566,10 @@ class NavigationToolbar(NavigationToolbar2Tk):
         b = super()._Button(text, image_file, toggle, command)
         if image_string is not None:
             im = Image.open(io.BytesIO(base64.b64decode(image_string)))
-            size = b.winfo_pixels('18p')
+            size = b.winfo_pixels("18p")
             image = ImageTk.PhotoImage(im.resize((size, size)), master=self)
-            b.configure(image=image, height='18p', width='18p')
-            b._ntimage = image
+            b.configure(image=image, height="18p", width="18p")
+            b._ntimage = image  # type: ignore
         if self.vertical_toolbar:
             b.pack(side=tk.TOP)  # re-pack button in vertical direction
         return b
@@ -470,8 +580,8 @@ class NavigationToolbar(NavigationToolbar2Tk):
             s = tk.Frame(self, width=26, relief=tk.RIDGE, bg="DarkGray", padx=2)
             s.pack(side=tk.TOP, pady=5)  # pack in vertical direction
         else:
-            s = tk.Frame(master=self, height='18p', relief=tk.RIDGE, bg='DarkGray')
-            s.pack(side=tk.LEFT, padx='3p')
+            s = tk.Frame(master=self, height="18p", relief=tk.RIDGE, bg="DarkGray")
+            s.pack(side=tk.LEFT, padx="3p")
         return s
 
     # disable showing mouse position in toolbar
@@ -480,8 +590,23 @@ class NavigationToolbar(NavigationToolbar2Tk):
 
 
 class FigureObject:
-    def __init__(self, line_cav, line_fwd, line_rev, canvas, toolbar, ax, ax2=None, line_l=None, line_h=None,
-                 line_decay_ref=None, line_cavity_du=None, line_system=None, line_waveguide=None, line_threshold=None):
+    def __init__(
+        self,
+        line_cav,
+        line_fwd,
+        line_rev,
+        canvas,
+        toolbar,
+        ax,
+        ax2=None,
+        line_l=None,
+        line_h=None,
+        line_decay_ref=None,
+        line_cavity_du=None,
+        line_system=None,
+        line_waveguide=None,
+        line_threshold=None,
+    ):
         self.line_cav = line_cav
         self.line_fwd = line_fwd
         self.line_rev = line_rev
@@ -499,9 +624,23 @@ class FigureObject:
 
 
 class UIElements:
-    def __init__(self, root, title_sv, date_sv, ticks_sv, figures, path_text_sv, cavity_checkbox_value,
-                 forward_checkbox_value, reverse_checkbox_value, decay_checkbox_value, cavity_du_checkbox_value,
-                 system_checkbox_value, waveguide_checkbox_value, background_color):
+    def __init__(
+        self,
+        root,
+        title_sv,
+        date_sv,
+        ticks_sv,
+        figures,
+        path_text_sv,
+        cavity_checkbox_value,
+        forward_checkbox_value,
+        reverse_checkbox_value,
+        decay_checkbox_value,
+        cavity_du_checkbox_value,
+        system_checkbox_value,
+        waveguide_checkbox_value,
+        background_color,
+    ):
         self.root = root
         self.title_sv = title_sv
         self.date_sv = date_sv
@@ -561,7 +700,9 @@ def calculate_scaling_factors(x_axis, y_axes1, y_axes2=None):
         y_lims_normalized = y_lims / y_mags
 
         # find combined range
-        y_new_lims_normalized = np.array([np.min(y_lims_normalized), np.max(y_lims_normalized)])
+        y_new_lims_normalized = np.array(
+            [np.min(y_lims_normalized), np.max(y_lims_normalized)]
+        )
 
         # denormalize combined range to get new axes
         new_lims = y_new_lims_normalized * y_mags
@@ -589,12 +730,14 @@ def reset_figure_scale(axes, scaling_factors):
 def rescale_figure(axes, log_content, ui_elements, signal_name):
     data = log_content.data
 
-    substitutions = {"amplitude": "A",
-                     "phase": "P",
-                     "power": "PWR",
-                     "i": "I",
-                     "q": "Q",
-                     "quench": ""}
+    substitutions = {
+        "amplitude": "A",
+        "phase": "P",
+        "power": "PWR",
+        "i": "I",
+        "q": "Q",
+        "quench": "",
+    }
 
     dictionary_signal_name = f"FLT{substitutions[signal_name]}WF"
 
@@ -637,8 +780,12 @@ def rescale_figure(axes, log_content, ui_elements, signal_name):
     reset_figure_scale(axes, scaling_factors)
 
 
-def create_popup_figure(ui_elements, figure, log_content, signal_name, home_scaling_factors):
-    child_w = tk.Toplevel(ui_elements.root, background=ui_elements.background_color, padx=10)
+def create_popup_figure(
+    ui_elements, figure, log_content, signal_name, home_scaling_factors
+):
+    child_w = tk.Toplevel(
+        ui_elements.root, background=ui_elements.background_color, padx=10
+    )
     child_w.geometry("750x450")
     child_w.title(figure.axes[0].get_title())
 
@@ -653,65 +800,97 @@ def create_popup_figure(ui_elements, figure, log_content, signal_name, home_scal
 
 
 def calculate_quench(log_content):
-    result = {"energy": False,
-              "bandwidth": False,
-              "amplitude": False,
-              "majority": False}
+    result = {
+        "energy": False,
+        "bandwidth": False,
+        "amplitude": False,
+        "majority": False,
+    }
 
-    if np.max(log_content.data["QUENCH:SYSTEM"]) - log_content.data["QUENCH_THRESH"] > 0:
+    if (
+        np.max(log_content.data["QUENCH:SYSTEM"]) - log_content.data["QUENCH_THRESH"]
+        > 0
+    ):
         result["energy"] = True
-
-
 
     return result
 
 
 def create_classification_window(ui_elements, log_content):
-    child_w = tk.Toplevel(ui_elements.root, background=ui_elements.background_color, padx=10, pady=10)
+    child_w = tk.Toplevel(
+        ui_elements.root, background=ui_elements.background_color, padx=10, pady=10
+    )
     child_w.title("Quench classification")
-    tk.Entry(child_w, textvariable=tk.StringVar(value="Energy balance"), width=20).grid(row=0, column=1, sticky="NW")
-    tk.Entry(child_w, textvariable=tk.StringVar(value="Bandwidth estimation"), width=20).grid(row=1, column=1,
-                                                                                              sticky="NW")
-    tk.Entry(child_w, textvariable=tk.StringVar(value="Amplitude decay"), width=20).grid(row=2, column=1,
-                                                                                         sticky="NW")
-    tk.Entry(child_w, textvariable=tk.StringVar(value="Majority"), width=20).grid(row=3, column=1, sticky="NW")
+    tk.Entry(child_w, textvariable=tk.StringVar(value="Energy balance"), width=20).grid(
+        row=0, column=1, sticky="NW"
+    )
+    tk.Entry(
+        child_w, textvariable=tk.StringVar(value="Bandwidth estimation"), width=20
+    ).grid(row=1, column=1, sticky="NW")
+    tk.Entry(
+        child_w, textvariable=tk.StringVar(value="Amplitude decay"), width=20
+    ).grid(row=2, column=1, sticky="NW")
+    tk.Entry(child_w, textvariable=tk.StringVar(value="Majority"), width=20).grid(
+        row=3, column=1, sticky="NW"
+    )
     radio_frame = tk.Frame(child_w, background=ui_elements.background_color)
     radio_frame.grid(row=4, column=1, columnspan=2, sticky="NW")
 
     result = calculate_quench(log_content)
 
     accept = tk.BooleanVar(value=result["majority"])
-    ttk.Radiobutton(radio_frame, variable=accept, value=True, text="Quench").pack(side=tk.LEFT)
-    ttk.Radiobutton(radio_frame, variable=accept, value=False, text="No quench").pack(side=tk.LEFT)
+    ttk.Radiobutton(radio_frame, variable=accept, value=True, text="Quench").pack(
+        side=tk.LEFT
+    )
+    ttk.Radiobutton(radio_frame, variable=accept, value=False, text="No quench").pack(
+        side=tk.LEFT
+    )
     child_w.rowconfigure(5, minsize=10)
-    ttk.Button(child_w, text="Record", width=20, command=lambda: print(accept.get())).grid(row=6, column=1,
-                                                                                           columnspan=2, sticky="NW")
+    ttk.Button(
+        child_w, text="Record", width=20, command=lambda: print(accept.get())
+    ).grid(row=6, column=1, columnspan=2, sticky="NW")
 
     if result["energy"]:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="No Quench"), background="LightGreen").grid(row=0, column=2,
-                                                                                                      sticky="NE")
+        tk.Entry(
+            child_w,
+            textvariable=tk.StringVar(value="No Quench"),
+            background="LightGreen",
+        ).grid(row=0, column=2, sticky="NE")
     else:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="Quench"), background="tomato").grid(row=0, column=2,
-                                                                                               sticky="NE")
+        tk.Entry(
+            child_w, textvariable=tk.StringVar(value="Quench"), background="tomato"
+        ).grid(row=0, column=2, sticky="NE")
 
     if result["bandwidth"]:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="No Quench"), background="LightGreen").grid(row=1, column=2,
-                                                                                                      sticky="NE")
+        tk.Entry(
+            child_w,
+            textvariable=tk.StringVar(value="No Quench"),
+            background="LightGreen",
+        ).grid(row=1, column=2, sticky="NE")
     else:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="Quench"), background="tomato").grid(row=1, column=2,
-                                                                                               sticky="NE")
+        tk.Entry(
+            child_w, textvariable=tk.StringVar(value="Quench"), background="tomato"
+        ).grid(row=1, column=2, sticky="NE")
     if result["amplitude"]:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="No Quench"), background="LightGreen").grid(row=2, column=2,
-                                                                                                      sticky="NE")
+        tk.Entry(
+            child_w,
+            textvariable=tk.StringVar(value="No Quench"),
+            background="LightGreen",
+        ).grid(row=2, column=2, sticky="NE")
     else:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="Quench"), background="tomato").grid(row=2, column=2,
-                                                                                               sticky="NE")
+        tk.Entry(
+            child_w, textvariable=tk.StringVar(value="Quench"), background="tomato"
+        ).grid(row=2, column=2, sticky="NE")
     if result["majority"]:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="No Quench"), background="LightGreen").grid(row=3, column=2,
-                                                                                                      sticky="NE")
+        tk.Entry(
+            child_w,
+            textvariable=tk.StringVar(value="No Quench"),
+            background="LightGreen",
+        ).grid(row=3, column=2, sticky="NE")
     else:
-        tk.Entry(child_w, textvariable=tk.StringVar(value="Quench"), background="tomato").grid(row=3, column=2,
-                                                                                               sticky="NE")
+        tk.Entry(
+            child_w, textvariable=tk.StringVar(value="Quench"), background="tomato"
+        ).grid(row=3, column=2, sticky="NE")
 
 
 def _bound_to_mousewheel(event, canvas):
@@ -733,40 +912,52 @@ def create_parameter_display_window(ui_elements, log_content):
     container2.columnconfigure(0, weight=1)
     container2.rowconfigure(0, weight=1)
     container2.pack(fill="both", expand=True)
-    canvas = tk.Canvas(container2, bg=ui_elements.background_color, highlightcolor=ui_elements.background_color,
-                       highlightbackground=ui_elements.background_color)
+    canvas = tk.Canvas(
+        container2,
+        bg=ui_elements.background_color,
+        highlightcolor=ui_elements.background_color,
+        highlightbackground=ui_elements.background_color,
+    )
     scrollbar = tk.Scrollbar(container2, orient="vertical", command=canvas.yview)
     canvas.configure(yscrollcommand=scrollbar.set)
-    scrollable_frame = tk.Frame(canvas, bg=ui_elements.background_color, pady=10, padx=10)
-    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    scrollable_frame = tk.Frame(
+        canvas, bg=ui_elements.background_color, pady=10, padx=10
+    )
+    scrollable_frame.bind(
+        "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
     canvas_frame = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-    canvas.bind('<Configure>', lambda event: frame_width(event, canvas, canvas_frame))
+    canvas.bind("<Configure>", lambda event: frame_width(event, canvas, canvas_frame))
     scrollbar.grid(column=1, row=0, sticky="NS")
     canvas.grid(column=0, row=0, sticky="NSEW")
-    scrollable_frame.bind('<Enter>', lambda e: _bound_to_mousewheel(e, canvas))
-    scrollable_frame.bind('<Leave>', lambda e: _unbound_to_mousewheel(e, canvas))
+    scrollable_frame.bind("<Enter>", lambda e: _bound_to_mousewheel(e, canvas))
+    scrollable_frame.bind("<Leave>", lambda e: _unbound_to_mousewheel(e, canvas))
 
     index = 0
     for key, value in log_content.data.items():
         if type(value) is float:
             index = index + 1
-            b1 = tk.Entry(scrollable_frame, textvariable=tk.StringVar(value=key), width=40)
+            b1 = tk.Entry(
+                scrollable_frame, textvariable=tk.StringVar(value=key), width=40
+            )
             b1.grid(row=index, column=1, sticky="NW")
-            b2 = tk.Entry(scrollable_frame, textvariable=tk.StringVar(value=value))
+            b2 = tk.Entry(scrollable_frame, textvariable=tk.StringVar(value=value))  # type: ignore
             b2.grid(row=index, column=2, sticky="NE")
 
 
 def update_window(log_content, ui_elements):
     update_figures(ui_elements.figures, log_content)
     ui_elements.title_sv.set(log_content.log_title)
-    ui_elements.date_sv.set(log_content.data.get('ACQ_FLT_TS'))
+    ui_elements.date_sv.set(log_content.data.get("ACQ_FLT_TS"))
     ui_elements.ticks_sv.set(f"{len(log_content.data['CAV:FLTTWF'])} ticks")
     ui_elements.path_text_sv.set(log_content.filename)
     ui_elements.root.wm_title(log_content.filename)
     ui_elements.parameters_button.configure(
-        command=lambda: create_parameter_display_window(ui_elements, log_content))
+        command=lambda: create_parameter_display_window(ui_elements, log_content)
+    )
     ui_elements.classification_button.configure(
-        command=lambda: create_classification_window(ui_elements, log_content))
+        command=lambda: create_classification_window(ui_elements, log_content)
+    )
 
 
 def update_figure(figure, log_content):
@@ -779,17 +970,21 @@ def update_figure(figure, log_content):
         figure.line_fwd.set_data(x_axis, data["FWD:FLTAWF"])
         figure.line_rev.set_data(x_axis, data["REV:FLTAWF"])
         figure.line_decay_ref.set_data(x_axis, data.get("DECAYREFWF"))
-        if data.get("CAV:FLTAWF.LOPR") is not None \
-                and data.get("CAV:FLTAWF.HOPR") is not None \
-                and data.get("FWD:FLTAWF.LOPR") is not None \
-                and data.get("FWD:FLTAWF.HOPR") is not None:
-            scaling = calculate_scaling_factors(x_axis,
-                                                [data["CAV:FLTAWF.LOPR"], data["CAV:FLTAWF.HOPR"]],
-                                                [data["FWD:FLTAWF.LOPR"], data["FWD:FLTAWF.HOPR"]])
+        if (
+            data.get("CAV:FLTAWF.LOPR") is not None
+            and data.get("CAV:FLTAWF.HOPR") is not None
+            and data.get("FWD:FLTAWF.LOPR") is not None
+            and data.get("FWD:FLTAWF.HOPR") is not None
+        ):
+            scaling = calculate_scaling_factors(
+                x_axis,
+                [data["CAV:FLTAWF.LOPR"], data["CAV:FLTAWF.HOPR"]],
+                [data["FWD:FLTAWF.LOPR"], data["FWD:FLTAWF.HOPR"]],
+            )
         else:
-            scaling = calculate_scaling_factors(x_axis,
-                                                data["CAV:FLTAWF"],
-                                                [data["FWD:FLTAWF"], data["REV:FLTAWF"]])
+            scaling = calculate_scaling_factors(
+                x_axis, data["CAV:FLTAWF"], [data["FWD:FLTAWF"], data["REV:FLTAWF"]]
+            )
         figure.toolbar.home_scaling_factors = scaling
         reset_figure_scale([figure.ax, figure.ax2], scaling)
         figure.canvas.draw()
@@ -797,7 +992,9 @@ def update_figure(figure, log_content):
         figure.line_cav.set_data(x_axis, data["CAV:FLTPWF"])
         figure.line_fwd.set_data(x_axis, data["FWD:FLTPWF"])
         figure.line_rev.set_data(x_axis, data["REV:FLTPWF"])
-        figure.toolbar.home_scaling_factors = calculate_scaling_factors(x_axis, [-180, 180])
+        figure.toolbar.home_scaling_factors = calculate_scaling_factors(
+            x_axis, [-180, 180]
+        )
         reset_figure_scale([figure.ax], figure.toolbar.home_scaling_factors)
         figure.ax.set_yticks([-180, 0, 180])
         figure.canvas.draw()
@@ -805,14 +1002,21 @@ def update_figure(figure, log_content):
         figure.line_cav.set_data(x_axis, data["CAV:FLTPWRWF"])
         figure.line_fwd.set_data(x_axis, data["FWD:FLTPWRWF"])
         figure.line_rev.set_data(x_axis, data["REV:FLTPWRWF"])
-        if data.get("FWD:FLTPWRWF.LOPR") is not None and data.get("FWD:FLTPWRWF.HOPR") is not None:
-            scaling = calculate_scaling_factors(x_axis,
-                                                [data["CAV:FLTPWRWF"]],
-                                                [data["FWD:FLTPWRWF.LOPR"], data["FWD:FLTPWRWF.HOPR"]])
+        if (
+            data.get("FWD:FLTPWRWF.LOPR") is not None
+            and data.get("FWD:FLTPWRWF.HOPR") is not None
+        ):
+            scaling = calculate_scaling_factors(
+                x_axis,
+                [data["CAV:FLTPWRWF"]],
+                [data["FWD:FLTPWRWF.LOPR"], data["FWD:FLTPWRWF.HOPR"]],
+            )
         else:
-            scaling = calculate_scaling_factors(x_axis,
-                                                [data["CAV:FLTPWRWF"]],
-                                                [data["FWD:FLTPWRWF"], data["REV:FLTPWRWF"]])
+            scaling = calculate_scaling_factors(
+                x_axis,
+                [data["CAV:FLTPWRWF"]],
+                [data["FWD:FLTPWRWF"], data["REV:FLTPWRWF"]],
+            )
         figure.toolbar.home_scaling_factors = scaling
         reset_figure_scale([figure.ax, figure.ax2], figure.toolbar.home_scaling_factors)
         figure.canvas.draw()
@@ -820,19 +1024,27 @@ def update_figure(figure, log_content):
         figure.line_cav.set_data(x_axis, data["CAV:FLTIWF"])
         figure.line_fwd.set_data(x_axis, data["FWD:FLTIWF"])
         figure.line_rev.set_data(x_axis, data["REV:FLTIWF"])
-     
+
         figure.line_l.set_data(x_axis, data.get("CTRL:FLTLIMS_IL"))
         figure.line_h.set_data(x_axis, data.get("CTRL:FLTLIMS_IH"))
-        if data.get("CTRL:FLTLIMS_IL") is not None and data.get("CTRL:FLTLIMS_IH") is not None:
-            figure.toolbar.home_scaling_factors = calculate_scaling_factors(x_axis, [data["CAV:FLTIWF"],
-                                                                                     data["FWD:FLTIWF"],
-                                                                                     data["REV:FLTIWF"],
-                                                                                     data["CTRL:FLTLIMS_IL"],
-                                                                                     data["CTRL:FLTLIMS_IH"]])
+        if (
+            data.get("CTRL:FLTLIMS_IL") is not None
+            and data.get("CTRL:FLTLIMS_IH") is not None
+        ):
+            figure.toolbar.home_scaling_factors = calculate_scaling_factors(
+                x_axis,
+                [
+                    data["CAV:FLTIWF"],
+                    data["FWD:FLTIWF"],
+                    data["REV:FLTIWF"],
+                    data["CTRL:FLTLIMS_IL"],
+                    data["CTRL:FLTLIMS_IH"],
+                ],
+            )
         else:
-            figure.toolbar.home_scaling_factors = calculate_scaling_factors(x_axis, [data["CAV:FLTIWF"],
-                                                                                     data["FWD:FLTIWF"],
-                                                                                     data["REV:FLTIWF"]])
+            figure.toolbar.home_scaling_factors = calculate_scaling_factors(
+                x_axis, [data["CAV:FLTIWF"], data["FWD:FLTIWF"], data["REV:FLTIWF"]]
+            )
         reset_figure_scale([figure.ax], figure.toolbar.home_scaling_factors)
         figure.canvas.draw()
     elif figure.ax.get_title() == "Q":
@@ -841,26 +1053,36 @@ def update_figure(figure, log_content):
         figure.line_rev.set_data(x_axis, data["REV:FLTQWF"])
         figure.line_l.set_data(x_axis, data.get("CTRL:FLTLIMS_QL"))
         figure.line_h.set_data(x_axis, data.get("CTRL:FLTLIMS_QH"))
-        if data.get("CTRL:FLTLIMS_QL") is not None and data.get("CTRL:FLTLIMS_QH") is not None:
-            figure.toolbar.home_scaling_factors = calculate_scaling_factors(x_axis, [data["CAV:FLTQWF"],
-                                                                                     data["FWD:FLTQWF"],
-                                                                                     data["REV:FLTQWF"],
-                                                                                     data["CTRL:FLTLIMS_QL"],
-                                                                                     data["CTRL:FLTLIMS_QH"]])
+        if (
+            data.get("CTRL:FLTLIMS_QL") is not None
+            and data.get("CTRL:FLTLIMS_QH") is not None
+        ):
+            figure.toolbar.home_scaling_factors = calculate_scaling_factors(
+                x_axis,
+                [
+                    data["CAV:FLTQWF"],
+                    data["FWD:FLTQWF"],
+                    data["REV:FLTQWF"],
+                    data["CTRL:FLTLIMS_QL"],
+                    data["CTRL:FLTLIMS_QH"],
+                ],
+            )
         else:
-            figure.toolbar.home_scaling_factors = calculate_scaling_factors(x_axis, [data["CAV:FLTQWF"],
-                                                                                     data["FWD:FLTQWF"],
-                                                                                     data["REV:FLTQWF"]])
+            figure.toolbar.home_scaling_factors = calculate_scaling_factors(
+                x_axis, [data["CAV:FLTQWF"], data["FWD:FLTQWF"], data["REV:FLTQWF"]]
+            )
         reset_figure_scale([figure.ax], figure.toolbar.home_scaling_factors)
     elif figure.ax.get_title() == "Quench detect":
         figure.line_cavity_du.set_data(data["QUENCH:FLTTWF"], data["QUENCH:CAVITY"])
         figure.line_system.set_data(data["QUENCH:FLTTWF"], data["QUENCH:SYSTEM"])
         figure.line_waveguide.set_data(data["QUENCH:FLTTWF"], data["QUENCH:WAVEGUIDE"])
-        figure.line_threshold.set_data(data["QUENCH:FLTTWF"], data.get("QUENCH:THRESHOLD"))
-        figure.toolbar.home_scaling_factors = calculate_scaling_factors(data["QUENCH:FLTTWF"],
-                                                                        [data["QUENCH:CAVITY"],
-                                                                         data["QUENCH:SYSTEM"],
-                                                                         data["QUENCH:WAVEGUIDE"]])
+        figure.line_threshold.set_data(
+            data["QUENCH:FLTTWF"], data.get("QUENCH:THRESHOLD")
+        )
+        figure.toolbar.home_scaling_factors = calculate_scaling_factors(
+            data["QUENCH:FLTTWF"],
+            [data["QUENCH:CAVITY"], data["QUENCH:SYSTEM"], data["QUENCH:WAVEGUIDE"]],
+        )
         reset_figure_scale([figure.ax], figure.toolbar.home_scaling_factors)
 
     figure.canvas.draw()
@@ -890,7 +1112,9 @@ def listbox_onselect(listbox, directory, ui_elements, radio_value):
         actual_directory = join(directory, value)
         filename = join(actual_directory, value + ".txt")
         if not isfile(filename):
-            showwarning(title="File not found", message=f"The file {filename} does not exist.")
+            showwarning(
+                title="File not found", message=f"The file {filename} does not exist."
+            )
             return
     else:
         filename = join(directory, value)
@@ -900,7 +1124,9 @@ def listbox_onselect(listbox, directory, ui_elements, radio_value):
     print(filename)
 
 
-def modify_entry_action(sv, onlyfiles, onlydirectories, listbox, case_checkbox_value, radio_value):
+def modify_entry_action(
+    sv, onlyfiles, onlydirectories, listbox, case_checkbox_value, radio_value
+):
     if radio_value.get() == 1:
         files = onlydirectories
     else:
@@ -929,9 +1155,11 @@ def enter_event_action(listbox, directory, ui_elements, radio_value):
 
 def open_directory_window(dir_path, ui_elements):
     onlyfiles = [f for f in listdir(dir_path) if isfile(join(dir_path, f))]
-    onlydirectories = [f for f in listdir(dir_path) if
-                       isdir(join(dir_path, f)) and
-                       isfile(join(dir_path, f, f + ".txt"))]
+    onlydirectories = [
+        f
+        for f in listdir(dir_path)
+        if isdir(join(dir_path, f)) and isfile(join(dir_path, f, f + ".txt"))
+    ]
     elements_list = onlydirectories
     child_w = tk.Toplevel(ui_elements.root)
     child_w.geometry("750x250")
@@ -948,31 +1176,58 @@ def open_directory_window(dir_path, ui_elements):
     radio_value = tk.IntVar()
 
     case_checkbox_value.set(0)
-    case_checkbox_value.trace("w",
-                              lambda name, index, mode: modify_entry_action(sv, onlyfiles, onlydirectories, listbox,
-                                                                            case_checkbox_value, radio_value))
-    case_checkbox = ttk.Checkbutton(filter_frame, text="Case sensitive", variable=case_checkbox_value)
+    case_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_entry_action(
+            sv, onlyfiles, onlydirectories, listbox, case_checkbox_value, radio_value
+        ),
+    )
+    case_checkbox = ttk.Checkbutton(
+        filter_frame, text="Case sensitive", variable=case_checkbox_value
+    )
     case_checkbox.pack(side=tk.LEFT)
 
     radio_frame = tk.Frame(child_w)
     radio_frame.pack(anchor=tk.W)
-    option_dirs_radio = ttk.Radiobutton(radio_frame, text="Show directories", variable=radio_value, value=1,
-                                        command=lambda: modify_entry_action(sv, onlyfiles, onlydirectories, listbox,
-                                                                            case_checkbox_value, radio_value))
+    option_dirs_radio = ttk.Radiobutton(
+        radio_frame,
+        text="Show directories",
+        variable=radio_value,
+        value=1,
+        command=lambda: modify_entry_action(
+            sv, onlyfiles, onlydirectories, listbox, case_checkbox_value, radio_value
+        ),
+    )
     option_dirs_radio.pack(anchor=tk.W)
-    option_files_radio = ttk.Radiobutton(radio_frame, text="Show files", variable=radio_value, value=2,
-                                         command=lambda: modify_entry_action(sv, onlyfiles, onlydirectories, listbox,
-                                                                             case_checkbox_value, radio_value))
+    option_files_radio = ttk.Radiobutton(
+        radio_frame,
+        text="Show files",
+        variable=radio_value,
+        value=2,
+        command=lambda: modify_entry_action(
+            sv, onlyfiles, onlydirectories, listbox, case_checkbox_value, radio_value
+        ),
+    )
     option_files_radio.pack(anchor=tk.W)
     radio_value.set(1)
 
     listbox_frame = tk.Frame(child_w)
     listbox_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
     listbox = tk.Listbox(listbox_frame, width=40, height=10, selectmode=tk.SINGLE)
-    listbox.bind('<<ListboxSelect>>', lambda event: listbox_onselect(listbox, dir_path, ui_elements, radio_value))
-    sv.trace("w", callback=lambda name, index, mode: modify_entry_action(sv, onlyfiles, onlydirectories, listbox,
-                                                                         case_checkbox_value, radio_value))
-    child_w.bind('<Return>', lambda event: enter_event_action(listbox, dir_path, ui_elements, radio_value))
+    listbox.bind(
+        "<<ListboxSelect>>",
+        lambda event: listbox_onselect(listbox, dir_path, ui_elements, radio_value),
+    )
+    sv.trace(
+        "w",
+        callback=lambda name, index, mode: modify_entry_action(
+            sv, onlyfiles, onlydirectories, listbox, case_checkbox_value, radio_value
+        ),
+    )
+    child_w.bind(
+        "<Return>",
+        lambda event: enter_event_action(listbox, dir_path, ui_elements, radio_value),
+    )
     elements_list.sort(reverse=True)
     for index, element in enumerate(elements_list):
         listbox.insert(index, element)
@@ -1008,8 +1263,8 @@ def create_figure(master, title, background_color=None):
     fig = Figure(figsize=(5, 3), dpi=100)
     ax = fig.add_subplot()
     ax.set_title(title)
-    ax.title.set_size(10)
-    ax.ticklabel_format(axis="x", style="sci", scilimits=[-2, 3])
+    ax.title.set_size(10)  # type: ignore
+    ax.ticklabel_format(axis="x", style="sci", scilimits=[-2, 3])  # type: ignore
     ax2 = None
     line_l = None
     line_h = None
@@ -1029,38 +1284,38 @@ def create_figure(master, title, background_color=None):
     if title == "Amplitude":
         ax.set_ylabel("MV")
         ax2 = ax.twinx()
-        line_cav, = ax.plot(x_data, y_data, linewidth=1, color=color1)
-        line_fwd, = ax2.plot(x_data, y_data, linewidth=1, color=color2)
-        line_rev, = ax2.plot(x_data, y_data, linewidth=1, color=color3)
-        line_decay_ref, = ax.plot(x_data, y_data, linewidth=1, color=color5)
+        (line_cav,) = ax.plot(x_data, y_data, linewidth=1, color=color1)
+        (line_fwd,) = ax2.plot(x_data, y_data, linewidth=1, color=color2)
+        (line_rev,) = ax2.plot(x_data, y_data, linewidth=1, color=color3)
+        (line_decay_ref,) = ax.plot(x_data, y_data, linewidth=1, color=color5)
         ax2.set_ylabel("sqrt(W)")
     elif title == "Phase":
         ax.set_ylabel("degrees")
-        line_cav, = ax.plot(x_data, y_data, linewidth=1, color=color1)
-        line_fwd, = ax.plot(x_data, y_data, linewidth=1, color=color2)
-        line_rev, = ax.plot(x_data, y_data, linewidth=1, color=color3)
+        (line_cav,) = ax.plot(x_data, y_data, linewidth=1, color=color1)
+        (line_fwd,) = ax.plot(x_data, y_data, linewidth=1, color=color2)
+        (line_rev,) = ax.plot(x_data, y_data, linewidth=1, color=color3)
     elif title == "Power":
         ax.set_ylabel("mW")
         ax2 = ax.twinx()
-        line_cav, = ax.plot(x_data, y_data, linewidth=1, color=color1)
-        line_fwd, = ax2.plot(x_data, y_data, linewidth=1, color=color2)
-        line_rev, = ax2.plot(x_data, y_data, linewidth=1, color=color3)
+        (line_cav,) = ax.plot(x_data, y_data, linewidth=1, color=color1)
+        (line_fwd,) = ax2.plot(x_data, y_data, linewidth=1, color=color2)
+        (line_rev,) = ax2.plot(x_data, y_data, linewidth=1, color=color3)
         ax2.set_ylabel("W")
     elif title in ("I", "Q"):
-        line_cav, = ax.plot(x_data, y_data, linewidth=1, color=color1)
-        line_fwd, = ax.plot(x_data, y_data, linewidth=1, color=color2)
-        line_rev, = ax.plot(x_data, y_data, linewidth=1, color=color3)
-        line_l, = ax.plot(x_data, y_data, linewidth=1, color=color4)
-        line_h, = ax.plot(x_data, y_data, linewidth=1, color=color4)
+        (line_cav,) = ax.plot(x_data, y_data, linewidth=1, color=color1)
+        (line_fwd,) = ax.plot(x_data, y_data, linewidth=1, color=color2)
+        (line_rev,) = ax.plot(x_data, y_data, linewidth=1, color=color3)
+        (line_l,) = ax.plot(x_data, y_data, linewidth=1, color=color4)
+        (line_h,) = ax.plot(x_data, y_data, linewidth=1, color=color4)
     elif title == "Quench detect":
-        line_cavity_du, = ax.plot(x_data, y_data, linewidth=1)
-        line_system, = ax.plot(x_data, y_data, linewidth=1)
-        line_waveguide, = ax.plot(x_data, y_data, linewidth=1)
-        line_threshold, = ax.plot(x_data, y_data, linewidth=1)
+        (line_cavity_du,) = ax.plot(x_data, y_data, linewidth=1)
+        (line_system,) = ax.plot(x_data, y_data, linewidth=1)
+        (line_waveguide,) = ax.plot(x_data, y_data, linewidth=1)
+        (line_threshold,) = ax.plot(x_data, y_data, linewidth=1)
     else:
-        line_cav, = ax.plot(x_data, y_data, linewidth=1, color=color1)
-        line_fwd, = ax.plot(x_data, y_data, linewidth=1, color=color2)
-        line_rev, = ax.plot(x_data, y_data, linewidth=1, color=color3)
+        (line_cav,) = ax.plot(x_data, y_data, linewidth=1, color=color1)
+        (line_fwd,) = ax.plot(x_data, y_data, linewidth=1, color=color2)
+        (line_rev,) = ax.plot(x_data, y_data, linewidth=1, color=color3)
 
     ax.set_xlabel("seconds")
 
@@ -1070,14 +1325,33 @@ def create_figure(master, title, background_color=None):
     canvas = FigureCanvasTkAgg(fig, master=master)
     canvas.draw()
     # pack_toolbar=False will make it easier to use a layout manager later on.
-    toolbar = NavigationToolbar(canvas, master, pack_toolbar=False, vertical_toolbar=True,
-                                background_color=background_color)
+    toolbar = NavigationToolbar(
+        canvas,
+        master,
+        pack_toolbar=False,
+        vertical_toolbar=True,
+        background_color=background_color,
+    )
     # toolbar.remove_rubberband()
     toolbar.update()
-    canvas.mpl_connect("key_press_event", key_press_handler)
+    canvas.mpl_connect("key_press_event", key_press_handler)  # type: ignore
 
-    return FigureObject(line_cav, line_fwd, line_rev, canvas, toolbar, ax, ax2, line_l, line_h, line_decay_ref,
-                        line_cavity_du, line_system, line_waveguide, line_threshold)
+    return FigureObject(
+        line_cav,
+        line_fwd,
+        line_rev,
+        canvas,
+        toolbar,
+        ax,
+        ax2,
+        line_l,
+        line_h,
+        line_decay_ref,
+        line_cavity_du,
+        line_system,
+        line_waveguide,
+        line_threshold,
+    )
 
 
 def modify_lines_action(figures, checkbox_value, line_string):
@@ -1130,14 +1404,20 @@ def create_main_window(file_path=None, dir_path=None):
     frame.columnconfigure(0, weight=1)
     frame.columnconfigure(2, weight=1)
 
-    canvas = tk.Canvas(container_frame, bg=background_color, highlightcolor=background_color,
-                       highlightbackground=background_color)
+    canvas = tk.Canvas(
+        container_frame,
+        bg=background_color,
+        highlightcolor=background_color,
+        highlightbackground=background_color,
+    )
     scrollbar = tk.Scrollbar(container_frame, orient="vertical", command=canvas.yview)
     canvas.configure(yscrollcommand=scrollbar.set)
     scrollable_frame = tk.Frame(canvas, bg=background_color)
-    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    scrollable_frame.bind(
+        "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
     canvas_frame = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-    canvas.bind('<Configure>', lambda event: frame_width(event, canvas, canvas_frame))
+    canvas.bind("<Configure>", lambda event: frame_width(event, canvas, canvas_frame))
     scrollbar.grid(column=1, row=1, sticky="NS")
     canvas.grid(column=0, row=1, sticky="NSEW")
 
@@ -1159,12 +1439,20 @@ def create_main_window(file_path=None, dir_path=None):
 
     path_text_sv = tk.StringVar()
     path_text_sv.set("")
-    path_text = tk.Entry(top_frame, textvariable=path_text_sv, state="readonly", width=10, justify="center",
-                         relief="flat")
+    path_text = tk.Entry(
+        top_frame,
+        textvariable=path_text_sv,
+        state="readonly",
+        width=10,
+        justify="center",
+        relief="flat",
+    )
     path_text.grid(column=6, row=1, sticky="NEW", columnspan=3)
     copy_menu = tk.Menu(root, tearoff=0)
     if pyperclip_imported:
-        copy_menu.add_command(label="Copy path", command=lambda: pyperclip.copy(path_text_sv.get()))
+        copy_menu.add_command(
+            label="Copy path", command=lambda: pyperclip.copy(path_text_sv.get())
+        )
         path_text.bind("<Button-3>", lambda event: menu_popup(event, copy_menu))
 
     buttons_frame.grid(column=0, row=0, sticky="NW")
@@ -1188,19 +1476,25 @@ def create_main_window(file_path=None, dir_path=None):
 
     # scrollable_frame.pack(fill=tk.BOTH)
 
-    figure_amplitude = create_figure(figure_amplitude_frame, "Amplitude", background_color)
+    figure_amplitude = create_figure(
+        figure_amplitude_frame, "Amplitude", background_color
+    )
     figure_phase = create_figure(figure_phase_frame, "Phase", background_color)
     figure_power = create_figure(figure_power_frame, "Power", background_color)
     figure_i = create_figure(figure_i_frame, "I", background_color)
     figure_q = create_figure(figure_q_frame, "Q", background_color)
-    figure_quench = create_figure(figure_quench_frame, "Quench detect", background_color)
+    figure_quench = create_figure(
+        figure_quench_frame, "Quench detect", background_color
+    )
 
-    figures = {"amplitude": figure_amplitude,
-               "phase": figure_phase,
-               "power": figure_power,
-               "i": figure_i,
-               "q": figure_q,
-               "quench": figure_quench}
+    figures = {
+        "amplitude": figure_amplitude,
+        "phase": figure_phase,
+        "power": figure_power,
+        "i": figure_i,
+        "q": figure_q,
+        "quench": figure_quench,
+    }
 
     cavity_checkbox_value = tk.IntVar(value=1)
     forward_checkbox_value = tk.IntVar(value=1)
@@ -1210,50 +1504,127 @@ def create_main_window(file_path=None, dir_path=None):
     system_checkbox_value = tk.IntVar(value=1)
     waveguide_checkbox_value = tk.IntVar(value=1)
 
-    ttk.Style().configure("CavityCheckbox.TCheckbutton", foreground=figure_amplitude.line_cav.get_color(),
-                          background=background_color)
-    ttk.Style().configure("ForwardCheckbox.TCheckbutton", foreground=figure_amplitude.line_fwd.get_color(),
-                          background=background_color)
-    ttk.Style().configure("ReverseCheckbox.TCheckbutton", foreground=figure_amplitude.line_rev.get_color(),
-                          background=background_color)
-    ttk.Style().configure("DecayCheckbox.TCheckbutton", foreground=figure_amplitude.line_decay_ref.get_color(),
-                          background=background_color)
-    ttk.Style().configure("CavityDUCheckbox.TCheckbutton", foreground=figure_quench.line_cavity_du.get_color(),
-                          background=background_color)
-    ttk.Style().configure("SystemCheckbox.TCheckbutton", foreground=figure_quench.line_system.get_color(),
-                          background=background_color)
-    ttk.Style().configure("WaveguideCheckbox.TCheckbutton", foreground=figure_quench.line_waveguide.get_color(),
-                          background=background_color)
+    ttk.Style().configure(
+        "CavityCheckbox.TCheckbutton",
+        foreground=figure_amplitude.line_cav.get_color(),  # type: ignore
+        background=background_color,
+    )
+    ttk.Style().configure(
+        "ForwardCheckbox.TCheckbutton",
+        foreground=figure_amplitude.line_fwd.get_color(),  # type: ignore
+        background=background_color,
+    )
+    ttk.Style().configure(
+        "ReverseCheckbox.TCheckbutton",
+        foreground=figure_amplitude.line_rev.get_color(),  # type: ignore
+        background=background_color,
+    )
+    ttk.Style().configure(
+        "DecayCheckbox.TCheckbutton",
+        foreground=figure_amplitude.line_decay_ref.get_color(),  # type: ignore
+        background=background_color,
+    )
+    ttk.Style().configure(
+        "CavityDUCheckbox.TCheckbutton",
+        foreground=figure_quench.line_cavity_du.get_color(),  # type: ignore
+        background=background_color,
+    )
+    ttk.Style().configure(
+        "SystemCheckbox.TCheckbutton",
+        foreground=figure_quench.line_system.get_color(),  # type: ignore
+        background=background_color,
+    )
+    ttk.Style().configure(
+        "WaveguideCheckbox.TCheckbutton",
+        foreground=figure_quench.line_waveguide.get_color(),  # type: ignore
+        background=background_color,
+    )
 
-    cavity_checkbox = ttk.Checkbutton(checkboxes_frame1, text="Cavity", variable=cavity_checkbox_value,
-                                      style="CavityCheckbox.TCheckbutton")
-    forward_checkbox = ttk.Checkbutton(checkboxes_frame1, text="Forward", variable=forward_checkbox_value,
-                                       style="ForwardCheckbox.TCheckbutton")
-    reverse_checkbox = ttk.Checkbutton(checkboxes_frame1, text="Reverse", variable=reverse_checkbox_value,
-                                       style="ReverseCheckbox.TCheckbutton")
-    decay_checkbox = ttk.Checkbutton(checkboxes_frame1, text="Decay", variable=decay_checkbox_value,
-                                     style="DecayCheckbox.TCheckbutton")
-    cavity_du_checkbox = ttk.Checkbutton(checkboxes_frame2, text="Cavity -dU/dt", variable=cavity_du_checkbox_value,
-                                         style="CavityDUCheckbox.TCheckbutton")
-    system_checkbox = ttk.Checkbutton(checkboxes_frame2, text="System net", variable=system_checkbox_value,
-                                      style="SystemCheckbox.TCheckbutton")
-    waveguide_checkbox = ttk.Checkbutton(checkboxes_frame2, text="Waveguide net", variable=waveguide_checkbox_value,
-                                         style="WaveguideCheckbox.TCheckbutton")
+    cavity_checkbox = ttk.Checkbutton(
+        checkboxes_frame1,
+        text="Cavity",
+        variable=cavity_checkbox_value,
+        style="CavityCheckbox.TCheckbutton",
+    )
+    forward_checkbox = ttk.Checkbutton(
+        checkboxes_frame1,
+        text="Forward",
+        variable=forward_checkbox_value,
+        style="ForwardCheckbox.TCheckbutton",
+    )
+    reverse_checkbox = ttk.Checkbutton(
+        checkboxes_frame1,
+        text="Reverse",
+        variable=reverse_checkbox_value,
+        style="ReverseCheckbox.TCheckbutton",
+    )
+    decay_checkbox = ttk.Checkbutton(
+        checkboxes_frame1,
+        text="Decay",
+        variable=decay_checkbox_value,
+        style="DecayCheckbox.TCheckbutton",
+    )
+    cavity_du_checkbox = ttk.Checkbutton(
+        checkboxes_frame2,
+        text="Cavity -dU/dt",
+        variable=cavity_du_checkbox_value,
+        style="CavityDUCheckbox.TCheckbutton",
+    )
+    system_checkbox = ttk.Checkbutton(
+        checkboxes_frame2,
+        text="System net",
+        variable=system_checkbox_value,
+        style="SystemCheckbox.TCheckbutton",
+    )
+    waveguide_checkbox = ttk.Checkbutton(
+        checkboxes_frame2,
+        text="Waveguide net",
+        variable=waveguide_checkbox_value,
+        style="WaveguideCheckbox.TCheckbutton",
+    )
 
-    cavity_checkbox_value.trace("w", lambda name, index, mode: modify_lines_action(figures, cavity_checkbox_value,
-                                                                                   "line_cav"))
-    forward_checkbox_value.trace("w", lambda name, index, mode: modify_lines_action(figures, forward_checkbox_value,
-                                                                                    "line_fwd"))
-    reverse_checkbox_value.trace("w", lambda name, index, mode: modify_lines_action(figures, reverse_checkbox_value,
-                                                                                    "line_rev"))
-    decay_checkbox_value.trace("w", lambda name, index, mode: modify_lines_action(figures, decay_checkbox_value,
-                                                                                  "line_decay_ref"))
-    cavity_du_checkbox_value.trace("w", lambda name, index, mode: modify_lines_action(figures, cavity_du_checkbox_value,
-                                                                                      "line_cavity_du"))
-    system_checkbox_value.trace("w", lambda name, index, mode: modify_lines_action(figures, system_checkbox_value,
-                                                                                   "line_system"))
-    waveguide_checkbox_value.trace("w", lambda name, index, mode: modify_lines_action(figures, waveguide_checkbox_value,
-                                                                                      "line_waveguide"))
+    cavity_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_lines_action(
+            figures, cavity_checkbox_value, "line_cav"
+        ),
+    )
+    forward_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_lines_action(
+            figures, forward_checkbox_value, "line_fwd"
+        ),
+    )
+    reverse_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_lines_action(
+            figures, reverse_checkbox_value, "line_rev"
+        ),
+    )
+    decay_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_lines_action(
+            figures, decay_checkbox_value, "line_decay_ref"
+        ),
+    )
+    cavity_du_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_lines_action(
+            figures, cavity_du_checkbox_value, "line_cavity_du"
+        ),
+    )
+    system_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_lines_action(
+            figures, system_checkbox_value, "line_system"
+        ),
+    )
+    waveguide_checkbox_value.trace(
+        "w",
+        lambda name, index, mode: modify_lines_action(
+            figures, waveguide_checkbox_value, "line_waveguide"
+        ),
+    )
 
     cavity_checkbox.pack(anchor="nw")
     forward_checkbox.pack(anchor="nw")
@@ -1263,35 +1634,65 @@ def create_main_window(file_path=None, dir_path=None):
     system_checkbox.pack(anchor="nw")
     waveguide_checkbox.pack(anchor="nw")
 
-    ui_elements = UIElements(root, title_sv, date_sv, ticks_sv, figures, path_text_sv, cavity_checkbox_value,
-                             forward_checkbox_value, reverse_checkbox_value, decay_checkbox_value,
-                             cavity_du_checkbox_value, system_checkbox_value, waveguide_checkbox_value,
-                             background_color)
+    ui_elements = UIElements(
+        root,
+        title_sv,
+        date_sv,
+        ticks_sv,
+        figures,
+        path_text_sv,
+        cavity_checkbox_value,
+        forward_checkbox_value,
+        reverse_checkbox_value,
+        decay_checkbox_value,
+        cavity_du_checkbox_value,
+        system_checkbox_value,
+        waveguide_checkbox_value,
+        background_color,
+    )
 
     for key, value in figures.items():
-        value.toolbar.ui_elements = ui_elements
-        value.toolbar.signal_name = key
+        value.toolbar.ui_elements = ui_elements  # type: ignore
+        value.toolbar.signal_name = key  # type: ignore
 
     ttk.Style().configure("bg.TButton", background=background_color)
     row1_buttons_frame = tk.Frame(buttons_frame, bg=background_color)
     row1_buttons_frame.pack(anchor="nw")
     row2_buttons_frame = tk.Frame(buttons_frame, bg=background_color)
     row2_buttons_frame.pack(anchor="nw")
-    ttk.Button(row1_buttons_frame, text="Quit", command=root.quit, style="bg.TButton").pack(side=tk.LEFT, anchor="nw")
-    ttk.Button(row1_buttons_frame, text="Open file", command=lambda: open_file_action(ui_elements),
-               style="bg.TButton").pack(side=tk.LEFT, anchor="nw")
-    ttk.Button(row1_buttons_frame, text="Open directory", command=lambda: open_directory_action(ui_elements),
-               style="bg.TButton").pack(side=tk.LEFT, anchor="nw")
-    parameters_button = ttk.Button(row2_buttons_frame, text="View parameters",
-                                   command=lambda: showwarning(title="File not found",
-                                                               message="You need to open a file first."),
-                                   style="bg.TButton")
+    ttk.Button(
+        row1_buttons_frame, text="Quit", command=root.quit, style="bg.TButton"
+    ).pack(side=tk.LEFT, anchor="nw")
+    ttk.Button(
+        row1_buttons_frame,
+        text="Open file",
+        command=lambda: open_file_action(ui_elements),
+        style="bg.TButton",
+    ).pack(side=tk.LEFT, anchor="nw")
+    ttk.Button(
+        row1_buttons_frame,
+        text="Open directory",
+        command=lambda: open_directory_action(ui_elements),
+        style="bg.TButton",
+    ).pack(side=tk.LEFT, anchor="nw")
+    parameters_button = ttk.Button(
+        row2_buttons_frame,
+        text="View parameters",
+        command=lambda: showwarning(
+            title="File not found", message="You need to open a file first."
+        ),
+        style="bg.TButton",
+    )
     parameters_button.pack(side=tk.LEFT, anchor="nw")
     ui_elements.parameters_button = parameters_button
-    classification_button = ttk.Button(row2_buttons_frame, text="Quench classification",
-                                       command=lambda: showwarning(title="File not found",
-                                                                   message="You need to open a file first."),
-                                       style="bg.TButton")
+    classification_button = ttk.Button(
+        row2_buttons_frame,
+        text="Quench classification",
+        command=lambda: showwarning(
+            title="File not found", message="You need to open a file first."
+        ),
+        style="bg.TButton",
+    )
     classification_button.pack(side=tk.LEFT, anchor="nw")
     ui_elements.classification_button = classification_button
 
@@ -1299,7 +1700,9 @@ def create_main_window(file_path=None, dir_path=None):
 
     figure_amplitude_frame.grid(column=0, row=1, sticky="NSEW")
     figure_amplitude.toolbar.pack(side=tk.LEFT)
-    figure_amplitude.canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    figure_amplitude.canvas.get_tk_widget().pack(
+        side=tk.LEFT, fill=tk.BOTH, expand=True
+    )
 
     figure_phase_frame.grid(column=0, row=2, sticky="NSEW")
     figure_phase.toolbar.pack(side=tk.LEFT)
@@ -1333,11 +1736,14 @@ def create_main_window(file_path=None, dir_path=None):
 
 
 if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(description='Fault Visualization Tool.',
-                                     epilog="Both arguments can be passed at the same time.")
-    parser.add_argument('-d', '--dir', help='open a selection window at the path specified')
-    parser.add_argument('-f', '--file', help='open the file specified')
+    parser = argparse.ArgumentParser(
+        description="Fault Visualization Tool.",
+        epilog="Both arguments can be passed at the same time.",
+    )
+    parser.add_argument(
+        "-d", "--dir", help="open a selection window at the path specified"
+    )
+    parser.add_argument("-f", "--file", help="open the file specified")
     args = parser.parse_args()
 
     file_path = args.file
@@ -1345,15 +1751,19 @@ if __name__ == "__main__":
         file = Path(file_path)
         if not file.is_file():
             file_path = None
-            showwarning(title="File not found",
-                        message="The file passed via command line does not exist. Use the interface or retry.")
+            showwarning(
+                title="File not found",
+                message="The file passed via command line does not exist. Use the interface or retry.",
+            )
 
     dir_path = args.dir
     if dir_path is not None:
         directory = Path(dir_path)
         if not directory.is_dir():
             dir_path = None
-            showwarning(title="Directory not found",
-                        message="The directory passed via command line does not exist. Use the interface or retry.")
+            showwarning(
+                title="Directory not found",
+                message="The directory passed via command line does not exist. Use the interface or retry.",
+            )
 
     create_main_window(file_path, dir_path)

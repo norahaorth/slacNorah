@@ -481,7 +481,7 @@ def pie_real_vs_false(
     def _label(pct):
         return f"{pct:.1f}%\n{next(name_iter)}"
 
-    wedges, texts, autotexts = ax.pie(
+    wedges, texts, autotexts = ax.pie(  # type: ignore
         [real, false],
         labels=None,
         # Pie-specific palette: CB-safe green (Okabe-Ito) for real,
@@ -499,7 +499,7 @@ def pie_real_vs_false(
     wedges[1].set_linewidth(1.5)
     for t in autotexts:
         t.set_fontweight("bold")
-        t.set_ha("center")
+        t.set_ha("center")  # type: ignore
     # Two-line title rendered close to the pie.
     if "\n" not in title:
         words = title.split()

@@ -3,7 +3,6 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import h5py
-
 import streamlit as st
 
 from utils.h5_reader import (
@@ -26,7 +25,7 @@ from quench_config import (
 )
 
 # from utils.srf_waveforms import calculate_loaded_q, validate_quench_lisa
-from utils.srf_waveforms import convert_pv_name_plot_string
+from utils.label_helpers import convert_pv_name_plot_string
 from classification.logic import QuenchStatus, compute_suggestion
 from utils.label_helpers import checked_status, format_event_status, event_matches_label
 

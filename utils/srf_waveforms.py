@@ -1,226 +1,76 @@
+import os
 import numpy as np
-import pandas as pd
-from datetime import datetime
-from pathlib import Path
 import matplotlib.pyplot as plt
-
-common_data = [
-    ("CAV:FLTAWF", "fault_waveform"),
-    ("FWD:FLTAWF", "forward_power"),
-    ("REV:FLTAWF", "reverse_power"),
-    ("DECAYREFWF", "decay_reference"),
-    ("CAV:FLTTWF", "fault_time"),
-    ("FWD:FLTTWF", "forward_time"),
-    ("REV:FLTTWF", "reverse_time"),
-    (":QLOADED", "saved_q_loaded"),
-    (":FREQ", "frequency"),
-]
-
-
-waveform_data = [key for _, key in common_data]
-by_label = {label: pv for pv, label in common_data}
-
-
-#  Convert the array lengths to a set to check if they are all the same
-def all_arrays_same_length(dictionary):
-
-    lengths = (len(arr) for arr in dictionary.values())
-    return len(set(lengths)) == 1
-
-
-def parse_h5_event_path(raw_name):
-    try:
-        path = Path(raw_name).with_suffix("")
-        basefile = path.name
-        date_str, time_str = basefile.split("_")
-        cm, cav = get_cm_cav_num_from_pv(raw_name)
-        return cm, cav, date_str, time_str
-    except (IndexError, ValueError):
-        return None
-
-
-# Make a cryomodule and cavity name for plots
-def convert_pv_name_plot_string(raw_name):
-    parsed = parse_h5_event_path(raw_name)
-    if parsed:
-        cm, cav, date_str, time_str = parsed
-        try:
-            date = datetime.strptime(f"{date_str}_{time_str}", "%Y%m%d_%H%M%S")
-            formatted_date = date.strftime("%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            formatted_date = f"{date_str}_{time_str}"
-        return f"Cryomodule {cm}, Cavity {cav} |  {formatted_date}"
-
-    cm, cav = get_cm_cav_num_from_pv(raw_name)
-
-    if cm and cav:
-        return f"cryomodule {cm}, cavity {cav}"
-
-    print(f"Warning: Could not parse PV name: {raw_name}")
-    return raw_name
-
-
-# Get cryomodule and cavity number from h5 file or PV
-def get_cm_cav_num_from_pv(name):
-    if "/" in name or "\\" in name:
-        try:
-            parts = Path(name).parts
-            cm_num = parts[-3].replace("CM", "")
-            cav_num = parts[-2].replace("CAV", "")
-            return cm_num, cav_num
-        except Exception as e:
-            print(f"Error parsing h5 file path: {name}. Exception: {e}")
-            return None, None
-
-    pv_parts = name.split(":")
-    try:
-        cav_num = pv_parts[2][2]
-        cm_num = pv_parts[2][:2]
-        return cm_num, cav_num
-    except Exception as e:
-        print(f"Error parsing PV name: {name}. Exception: {e}")
-        return None, None
-
-
-# Extract forward, reverse, and reference waveforms from the Pandas DataFrame
-def grab_common_data(df):
-
-    waveform_suffixes = [name for name, key in common_data]
-    mask = df["pvname"].str.endswith(tuple(waveform_suffixes), na=False)
-    return df[mask]
-
-
-def label_to_values(quench_data):
-    return {
-        label: quench_data.loc[
-            quench_data["pvname"].str.endswith(pv_suffix, na=False),
-            "values",
-        ].iloc[0]
-        for pv_suffix, label in common_data
-        if quench_data["pvname"].str.endswith(pv_suffix, na=False).any()
-    }
-
-
-# Load one SRF fault file into a DataFrame
-def load_fault_file(filename):
-    rows = []
-    with open(filename) as f:
-        basefile = filename.split("/")[-1]
-        for line in f:
-            if line.startswith("#"):
-                # TODO: handle comment lines
-                continue  # skip comment lines
-            components = line.strip().split()
-            if len(components) < 3:
-                # TODO: handle lines with insufficient data
-                continue
-            if "CAL" in line:
-                # TODO: handle calibration timestamp lines skip for now
-                continue
-            if "ACQ_FLT_TS" in line:
-                continue  # TODO: handle acquisition timestamp lines
-
-            name = components[0]
-            timestamp = components[1]
-            cm_num, cav_num = get_cm_cav_num_from_pv(name)
-
-            try:
-                values = [float(x) for x in components[2:]]
-            except ValueError:
-                print(f"Warning: Skipping line due to conversion error: {line.strip()}")
-                continue  # skip lines with non-numeric values
-
-            rows.append(
-                {
-                    "file_date": make_timestamp_string(
-                        basefile
-                    ),  # gives YEARMONTHDAY_HOURMINUTESECOND
-                    "pvname": name,
-                    "cryomodule": cm_num,
-                    "cavity": cav_num,
-                    "data_timestamp": timestamp,
-                    "values": values,
-                    "source_file": basefile,  # just the filename without path
-                }
-            )
-    df = pd.DataFrame(rows)
-    return df
-
-
-def make_timestamp_string(basefile):
-    file_date = basefile.split("_")[3:5]
-    return f"{file_date[0]}_{file_date[1]}"
+from dataclasses import asdict
+from utils.config import DATA_DIR
 
 
 def validate_quench_lisa(quench_data):
     """
-     This function is responsible for suggesting whether an event is real or false, this is how it works:
-    - Trim the waveform to start at t = 0
-    - Trim the tail once the amplitude is < 0.002
-    - Fit ln(A0/A(t)) vs. time to a line; the slope gives the decay rate and loaded Q = (pi * frequency)/ slope
-    - Suggest Real if the loaded Q is < (LOADED_Q_CHANGE_FOR_QUENCH * saved_q_loaded), otherwise suggest False
-
-    https://education.molssi.org/python-data-analysis/03-data-fitting/index.html
-
+    Evaluates real vs false quench based on decay rate.
+    Expects a QuenchData dataclass from the HDF5 loader.
     """
     LOADED_Q_CHANGE_FOR_QUENCH = 0.6
     other = None
 
-    labeled_values = label_to_values(quench_data)
-    if "frequency" not in labeled_values:
-        print(f"Missing frequency in: {quench_data['source_file'].iloc[0]}")
-        print(quench_data["pvname"].unique())
-        labeled_values["frequency"] = np.array([1300000000.0])
+    freq_val = getattr(quench_data, "frequency", None)
+    if freq_val is None or (isinstance(freq_val, np.ndarray) and freq_val.size == 0):
+        print("Warning: Missing frequency, using default 1.3e9")
+        frequency = 1300000000.0
+    else:
+        frequency = float(np.asarray(freq_val).flat[0])
 
-    time_data = np.array(labeled_values["fault_time"])
-    fault_data = np.array(labeled_values["fault_waveform"])
-    frequency = np.array(labeled_values["frequency"])
+    time_data = np.array(quench_data.fault_time)
+    fault_data = np.array(quench_data.fault_waveform)
+
+    if len(time_data) == 0 or len(fault_data) == 0:
+        print("Warning: Empty waveforms provided to validate_quench_lisa.")
+        return {"is_real": False, "loaded_q": np.nan, "other_issue": "empty_waveforms"}
 
     time_0 = 0
-    for time_0, timestamp in enumerate(time_data):
+    for i, timestamp in enumerate(time_data):
         if timestamp >= 0:
+            time_0 = i
             break
 
     fault_data = fault_data[time_0:]
     time_data = time_data[time_0:]
     end_decay = len(fault_data) - 1
 
-    for end_decay, amp in enumerate(fault_data):
+    for i, amp in enumerate(fault_data):
         if amp < 0.002:
+            end_decay = i
             break
 
     if end_decay <= 1:
-        print(
-            f"Warning: End of decay not found for {quench_data['source_file'].iloc[0]}, using all data points."
-        )
-        print(
-            "Fault data length:",
-            len(fault_data),
-            "Fault data first/last values:",
-            fault_data[0],
-            fault_data[-1],
-        )
+        print("Warning: End of decay not found, using all data points.")
         other = "end_decay_not_found"
-        fault_data = fault_data[:]
         pre_quench_amp = fault_data[0]
-        time_data = time_data[:]
     else:
         fault_data = fault_data[:end_decay]
         time_data = time_data[:end_decay]
         pre_quench_amp = fault_data[0]
 
-    saved_loaded_q = float(labeled_values["saved_q_loaded"][0])
+    saved_q_val = getattr(quench_data, "saved_q_loaded", None)
+    if saved_q_val is None or (
+        isinstance(saved_q_val, np.ndarray) and saved_q_val.size == 0
+    ):
+        print("Warning: Missing saved_q_loaded value.")
+        return {
+            "is_real": False,
+            "loaded_q": np.nan,
+            "other_issue": "missing_saved_q_loaded",
+        }
+
+    saved_loaded_q = float(np.asarray(saved_q_val).flat[0])
 
     try:
         with np.errstate(divide="raise", invalid="raise"):
             log_ratio = np.log(pre_quench_amp / fault_data)
             exponential_term = np.polyfit(time_data, log_ratio, 1)[0]
             loaded_q = (np.pi * frequency) / exponential_term
-    except (FloatingPointError, ZeroDivisionError) as e:
-        print(
-            f"Warning: divide-by-zero / invalid value in "
-            f"{quench_data['source_file'].iloc[0]}: {e}"
-        )
+    except (FloatingPointError, ZeroDivisionError, TypeError) as e:
+        print(f"Warning: divide-by-zero / invalid value encountered: {e}")
         return {
             "is_real": False,
             "loaded_q": np.nan,
@@ -229,10 +79,10 @@ def validate_quench_lisa(quench_data):
 
     thresh_for_quench = LOADED_Q_CHANGE_FOR_QUENCH * saved_loaded_q
     is_real = loaded_q < thresh_for_quench
+
     return {"is_real": is_real, "loaded_q": loaded_q, "other_issue": other}
 
 
-# Plots cavity, forward, reverse, and decay waveforms on the same graph.
 def plot_quench_waveforms(single_quench_data, save_name="quench_plot.png"):
     line_styles = {
         "fault_waveform": {"color": "indigo", "linestyle": "-", "linewidth": 3},
@@ -244,12 +94,17 @@ def plot_quench_waveforms(single_quench_data, save_name="quench_plot.png"):
     plt.figure(figsize=(6.5, 4))
     plt.tick_params(axis="both", which="major", labelsize=14)
 
-    time_axis = single_quench_data.get("fault_time")
+    if hasattr(single_quench_data, "__dataclass_fields__"):
+        data_dict = asdict(single_quench_data)
+    else:
+        data_dict = single_quench_data
 
-    for key, data in single_quench_data.items():
-        if key in line_styles:
+    time_axis = data_dict.get("fault_time")
+
+    for key, data in data_dict.items():
+        if key in line_styles and data is not None and len(data) > 0:
             style = line_styles.get(key, {})
-            plt.plot(time_axis, data, label=key.replace("_", " ").title(), **style)
+            plt.plot(time_axis, data, label=key.replace("_", " ").title(), **style) # type: ignore
 
     plt.xlabel("Time (s)", size=14)
     plt.ylabel("Amplitude (MV)", size=14)
@@ -258,6 +113,34 @@ def plot_quench_waveforms(single_quench_data, save_name="quench_plot.png"):
     plt.tight_layout()
     plt.xlim(-0.02, 0.06)
 
-    plt.savefig(save_name, dpi=300)
-    print(f"Plot saved as {save_name}")
+    # Route the save path to DATA_DIR
+    save_path = os.path.join(DATA_DIR, save_name)
+    plt.savefig(save_path, dpi=300)
+    print(f"Plot saved successfully to {save_path}")
     plt.show()
+
+
+if __name__ == "__main__":
+    import sys
+    import os
+
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+    from utils.h5_load_data import load_quench_events
+    from utils.config import H5_GLOB
+
+    events_iterator = load_quench_events(H5_GLOB, load_waveforms=True)
+
+    try:
+        event_id, filename, quench_data = next(events_iterator)
+        print(f"Testing event: {event_id} from {filename}")
+
+        # Run Lisa's math
+        result = validate_quench_lisa(quench_data)
+        print(f"Is Real?   {result['is_real']}")
+
+        # Actually draw and save the plot!
+        plot_filename = f"plot_{event_id.replace('/', '_')}.png"
+        plot_quench_waveforms(quench_data, save_name=plot_filename)
+
+    except StopIteration:

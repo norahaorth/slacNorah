@@ -9,7 +9,6 @@ from numpy.typing import NDArray
 from typing import Iterator, Tuple, Dict
 from dataclasses import fields
 from pathlib import Path
-
 from utils.config import DATA_DIR, H5_GLOB, DataBundle, QuenchData
 from interface.quench_config import SIGNAL_TIME_MAP
 
@@ -55,10 +54,10 @@ def extract_quench_data(group: h5py.Group, load_waveforms: bool = True) -> Quenc
     data_dict["quench_classification"] = clean_label
 
     if "frequency" not in data_dict and "FREQ" in group.attrs:
-        data_dict["frequency"] = float(group.attrs["FREQ"])
+        data_dict["frequency"] = float(group.attrs["FREQ"])  # type: ignore
 
     if "saved_q_loaded" not in data_dict and "QLOADED" in group.attrs:
-        data_dict["saved_q_loaded"] = float(group.attrs["QLOADED"])
+        data_dict["saved_q_loaded"] = float(group.attrs["QLOADED"])  # type: ignore
 
     return QuenchData(**data_dict)
 
@@ -137,7 +136,7 @@ def mp_events(events, keep=False, source="all"):
     return events[mask].reset_index(drop=True)
 
 
-# Builds the main plot-ready DataBundle by loading and filtering events
+# Builds the main plot ready DataBundle by loading and filtering events
 def build_plotter_bundle(
     source_glob: str = H5_GLOB, load_waveforms: bool = False
 ) -> DataBundle:
@@ -191,7 +190,7 @@ def get_ui_waveform_signals(
     """Loads and formats waveform data from an HDF5 file for easy UI plotting."""
     with h5py.File(file_path, "r") as f:
         group = f[event_path]
-        quench_data = extract_quench_data(group, load_waveforms=True)
+        quench_data = extract_quench_data(group, load_waveforms=True)  # type: ignore
 
     signal_data = {}
     signal_time_map = {
@@ -238,15 +237,15 @@ def load_quench_waveforms(events, source):
             for cm in f:
                 if cm not in {w[0] for w in wanted}:
                     continue
-                for cav in f[cm]:
+                for cav in f[cm]:  # type: ignore
                     if (cm, cav) not in {(w[0], w[1]) for w in wanted}:
                         continue
-                    for ts in f[cm][cav]:
+                    for ts in f[cm][cav]:  # type: ignore
                         if (cm, cav, ts) not in wanted:
                             continue
-                        g = f[cm][cav][ts]
+                        g = f[cm][cav][ts]  # type: ignore
                         out[f"{cm}/{cav}/{ts}"] = {
-                            "datasets": {k: g[k][...] for k in g.keys()},
+                            "datasets": {k: g[k][...] for k in g.keys()},  # type: ignore
                             "attrs": {k: g.attrs[k] for k in g.attrs.keys()},
                         }
     return out
@@ -270,7 +269,7 @@ def load_csv(path):
         try:
             return pd.read_csv(path)
         except Exception:
-            return pd.read_csv(path, delim_whitespace=True)
+            return pd.read_csv(path, delim_whitespace=True)  # type: ignore
     raise ValueError(f"Error with file type: {path}")
 
 

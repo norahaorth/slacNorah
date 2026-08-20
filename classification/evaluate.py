@@ -25,7 +25,7 @@ def run_classification(
     classification_results = {}
 
     for event_id, filename, event_data in events_iterator:
-        label = classify(event_data)
+        label = classify(event_data)  # type: ignore
         classification_results[event_id] = (label, filename)
 
     return classification_results
