@@ -62,11 +62,13 @@ def extract_quench_data(group: h5py.Group, load_waveforms: bool = True) -> Quenc
     for field in fields(QuenchData):
         if field.name in group:
             if not load_waveforms:
+                data_dict[field.name] = np.array([])
                 continue
 
-            item = group[field.name]
-            if isinstance(item, h5py.Dataset):
-                data_dict[field.name] = item[()]
+        item = group[field.name]
+        if isinstance(item, h5py.Dataset):
+            data_dict[field.name] = item[()]
+
         elif field.name in group.attrs:
             val = group.attrs[field.name]
 
