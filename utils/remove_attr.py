@@ -1,12 +1,11 @@
 import h5py
 
-# Run [ python remove_attr.py ]in your terminal 
-h5_file_path = ''
-attr_to_remove = ''
+# Run [ python remove_attr.py ]in your terminal
+h5_file_path = ""
+attr_to_remove = ""
 removed = 0
 
-with h5py.File(h5_file_path, 'a') as f:
-
+with h5py.File(h5_file_path, "a") as f:
     if attr_to_remove in f.attrs:
         del f.attrs[attr_to_remove]
         removed += 1
@@ -20,5 +19,5 @@ with h5py.File(h5_file_path, 'a') as f:
 
     f.visititems(visit)
 
-# Confirm the attribute is removed 
+# Confirm the attribute is removed
 print(f"Removed '{attr_to_remove}' from {removed} places.")

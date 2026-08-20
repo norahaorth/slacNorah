@@ -6,12 +6,9 @@ import pandas as pd
 import re
 from interface.quench_config import SIGNAL_TIME_MAP
 
-# The H5 files written by ``save_data_h5.py`` are the source of truth.
 
 EVENT_COLS = ["source_file", "cm", "cav", "date", "year", "month", "day", "is_real"]
 
-# Cryomodules in the harmonic linac (HL) — sometimes excluded from
-# whole-machine plots since they sit between L1 and L2 physically.
 CMHLs = ["CMH1", "CMH2"]
 
 
@@ -131,7 +128,6 @@ def peak_quench_day_per_cavity(events, top_n=3, real_only=True, save_path=None):
 
 
 def print_peak_quench_day_summary(events, top_n=3, real_only=True):
-    """Pretty-print the top ``top_n`` quench days for each cavity."""
     peak = peak_quench_day_per_cavity(events, top_n=top_n, real_only=real_only)
     label = "real" if real_only else "all"
     print(f"\nTop {top_n} quench days per cavity ({label} quenches):")
@@ -174,7 +170,6 @@ def peak_days_not_in_mp(peak, mp_events_df):
 
 
 def _resolve_paths(source):
-    """Normalize a source spec to a sorted list of H5 file paths."""
     if isinstance(source, str) and any(c in source for c in "*?["):
         paths = sorted(glob.glob(source))
         if not paths:
@@ -248,17 +243,18 @@ def load_quench_waveforms(events, source):
                         }
     return out
 
+
 def load_csv(path):
     """
-    load the csv or txt files into pandas dataframe 
+    load the csv or txt files into pandas dataframe
 
-    - csv files are read direclty 
-    - txt files are comma-seperated first, if that fails it fall back to whitespace-seperated 
-    - Otherwise, it throws an error 
+    - csv files are read direclty
+    - txt files are comma-seperated first, if that fails it fall back to whitespace-seperated
+    - Otherwise, it throws an error
     """
-    if path.endswith('.csv'):
+    if path.endswith(".csv"):
         return pd.read_csv(path)
-    elif path.endswith('.txt'):
+    elif path.endswith(".txt"):
         try:
             return pd.read_csv(path)
         except Exception:
@@ -278,15 +274,17 @@ def list_cavities(h5_file, cm):
         return []
     return sorted(k for k in h5_file[cm].keys() if re.fullmatch(r"CAV\d+", k))
 
+
 def list_years(h5_file, cm, cav):
     "This function is used for the events filter in the interface"
     years = set()
     if cm in h5_file and cav in h5_file[cm]:
         for name in h5_file[cm][cav].keys():
-            match = re.match (r"(\d{4})\d{4}_\d{6}", name)
+            match = re.match(r"(\d{4})\d{4}_\d{6}", name)
             if match:
                 years.add(match.group(1))
     return sorted(years)
+
 
 def has_signal(group):
     return bool(set(group.keys()) & set(SIGNAL_TIME_MAP.keys()))

@@ -4,7 +4,6 @@ from datetime import datetime
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-# Partial PVs to search for various waveforms
 common_data = [
     ("CAV:FLTAWF", "fault_waveform"),
     ("FWD:FLTAWF", "forward_power"),
@@ -15,7 +14,6 @@ common_data = [
     ("REV:FLTTWF", "reverse_time"),
     (":QLOADED", "saved_q_loaded"),
     (":FREQ", "frequency"),
-    # ('ACQ_SAMP_PERIOD', 'sampling_period'),
 ]
 
 
@@ -23,8 +21,9 @@ waveform_data = [key for _, key in common_data]
 by_label = {label: pv for pv, label in common_data}
 
 
+#  Convert the array lengths to a set to check if they are all the same
 def all_arrays_same_length(dictionary):
-    """Convert the array lengths to a set to check if they are all the same"""
+
     lengths = (len(arr) for arr in dictionary.values())
     return len(set(lengths)) == 1
 
@@ -40,9 +39,8 @@ def parse_h5_event_path(raw_name):
         return None
 
 
+# Make a cryomodule and cavity name for plots
 def convert_pv_name_plot_string(raw_name):
-    """Make a cryomodule and cavity name for plots"""
-    # Case 1: h5 file path
     parsed = parse_h5_event_path(raw_name)
     if parsed:
         cm, cav, date_str, time_str = parsed
@@ -53,7 +51,6 @@ def convert_pv_name_plot_string(raw_name):
             formatted_date = f"{date_str}_{time_str}"
         return f"Cryomodule {cm}, Cavity {cav} |  {formatted_date}"
 
-    # Case 2: PV name
     cm, cav = get_cm_cav_num_from_pv(raw_name)
 
     if cm and cav:
@@ -63,9 +60,8 @@ def convert_pv_name_plot_string(raw_name):
     return raw_name
 
 
+# Get cryomodule and cavity number from h5 file or PV
 def get_cm_cav_num_from_pv(name):
-    """Get cryomodule and cavity number from h5 file or PV."""
-    # Case 1: h5 file path (CM01/CAV1/20220630_150321)
     if "/" in name or "\\" in name:
         try:
             parts = Path(name).parts
@@ -76,7 +72,6 @@ def get_cm_cav_num_from_pv(name):
             print(f"Error parsing h5 file path: {name}. Exception: {e}")
             return None, None
 
-    # Case 2: PV name (ACCL:L3B:3180)
     pv_parts = name.split(":")
     try:
         cav_num = pv_parts[2][2]
@@ -87,10 +82,9 @@ def get_cm_cav_num_from_pv(name):
         return None, None
 
 
+# Extract forward, reverse, and reference waveforms from the Pandas DataFrame
 def grab_common_data(df):
-    """
-    Extract forward, reverse, and reference waveforms from the Pandas DataFrame.
-    """
+
     waveform_suffixes = [name for name, key in common_data]
     mask = df["pvname"].str.endswith(tuple(waveform_suffixes), na=False)
     return df[mask]
@@ -107,8 +101,8 @@ def label_to_values(quench_data):
     }
 
 
+# Load one SRF fault file into a DataFrame
 def load_fault_file(filename):
-    """Load one SRF fault file into a DataFrame."""
     rows = []
     with open(filename) as f:
         basefile = filename.split("/")[-1]
@@ -183,7 +177,6 @@ def validate_quench_lisa(quench_data):
     frequency = np.array(labeled_values["frequency"])
 
     time_0 = 0
-    # Look for time 0 (quench). These waveforms capture data beforehand
     for time_0, timestamp in enumerate(time_data):
         if timestamp >= 0:
             break
@@ -192,7 +185,6 @@ def validate_quench_lisa(quench_data):
     time_data = time_data[time_0:]
     end_decay = len(fault_data) - 1
 
-    # Find where the amplitude decays to "zero"
     for end_decay, amp in enumerate(fault_data):
         if amp < 0.002:
             break
