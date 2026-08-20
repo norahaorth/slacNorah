@@ -83,30 +83,21 @@ def classify(event_data: QuenchData) -> QuenchStatus:
     return QuenchStatus.other
 
 
+# Computes the classification suggestion using the classify system
 def compute_suggestion(signal_data, frequency, saved_q_loaded):
-    """Compute the classification suggestion using the classify system written by Norah"""
 
-    # If there is no fault_waveform, we are unable to classify
     if "fault_waveform" not in signal_data:
         return None
 
-    x_fault, y_fault = signal_data[
-        "fault_waveform"
-    ]  # Split the fault_waveform (time, amplitude) tuple into two separate arrays
+    x_fault, y_fault = signal_data["fault_waveform"]
 
-    # If the forward_power is missing, we can't run the classifier
     if "forward_power" not in signal_data:
         return None
-    x_fwd, y_fwd = signal_data[
-        "forward_power"
-    ]  # Split the forward_power (time, amplitude) tuple into two separate arrays
+    x_fwd, y_fwd = signal_data["forward_power"]
 
-    # reverse_power may or may not exist, if missing assign none to the time and amplitude
     x_rev, y_rev = signal_data.get("reverse_power", (None, None))
 
     try:
-        # Build the QuenchData object
-        # Convert every array into float for safer math calculations
         quench_event = QuenchData(
             fault_time=np.asarray(x_fault, dtype=float),
             fault_waveform=np.asarray(y_fault, dtype=float),
@@ -114,24 +105,18 @@ def compute_suggestion(signal_data, frequency, saved_q_loaded):
             forward_time=np.asarray(x_fwd, dtype=float),
             reverse_power=np.asarray(y_rev, dtype=float)
             if y_rev is not None
-            else np.array(
-                []
-            ),  # Reverse power amplitude if available, else an empty array
+            else np.array([]),
             reverse_time=np.asarray(x_rev, dtype=float)
             if x_rev is not None
-            else np.array([]),  # Reverse time if available, else an empty array
+            else np.array([]),
         )
 
         if frequency is not None:
-            # Convert frequency into numpy no matter what type of data it came in
             quench_event.frequency = float(np.asarray(frequency).flat[0])
         if saved_q_loaded is not None:
-            # Convert saved_q_loaded into numpy no matter what type of data it came in
             quench_event.saved_q_loaded = float(np.asarray(saved_q_loaded).flat[0])
 
-        return classify(
-            quench_event
-        )  # Calls classify function which returns a QuenchStatus [real, false, other or cavoty off]
+        return classify(quench_event)
     except Exception as e:
         st.error(f"Classification suggestion has failed: {e}")
         return None
