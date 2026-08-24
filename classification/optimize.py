@@ -24,10 +24,10 @@ if __name__ == "__main__":
     study.optimize(objective, n_trials=n_trials)
 
     print("\n" + "═" * 50)
-    print(" 🏆 OPTIMIZATION COMPLETE 🏆 ".center(50, "═"))
+    print(" OPTIMIZATION COMPLETE ".center(50, "═"))
     print("═" * 50)
-    print(f"\n🎯 Best Accuracy Achieved: {study.best_value:.2f}%\n")
-    print("📊 Optimal Thresholds to use in production:")
+    print(f"\n Best Accuracy Achieved: {study.best_value:.2f}%\n")
+    print("Optimal Thresholds to use in production:")
     print("-" * 40)
     for key, value in study.best_params.items():
         print(f"   {key:<15} = {value:.5f}")
