@@ -15,17 +15,17 @@ from pathlib import Path
 from typing import Iterator, Tuple, Dict, Any
 from utils.config import DATA_DIR
 from .data_loader import QuenchData, load_quench_events
-from .logic import classify
+from .logic import QuenchThresholds, classify
 
 
 # Runs the classification logic on all provided events
 def run_classification(
-    events_iterator: Iterator[Tuple[str, str, QuenchData]],
+    events_iterator: Iterator[Tuple[str, str, QuenchData]], parameters: QuenchThresholds
 ) -> Dict[str, Tuple[Any, str]]:
     classification_results = {}
 
     for event_id, filename, event_data in events_iterator:
-        label = classify(event_data)
+        label = classify(event_data, parameters)
         classification_results[event_id] = (label, filename)
 
     return classification_results
@@ -34,7 +34,7 @@ def run_classification(
 # Compares your predicted labels against the true labels and prints any mismatches
 def compare_classification(
     predictions: Dict[str, Tuple[Any, str]], ground_truth_file: Path
-) -> None:
+) -> float:
     correct = 0
     total = 0
 
@@ -63,28 +63,27 @@ def compare_classification(
 
                 if predicted_val.strip().upper() == str(true_label).strip().upper():
                     correct += 1
-                else:
-                    print(
-                        f"Mismatch in {source_file:22} | Event: {event_id:32} | Predicted: {predicted_val.lower():5} | Actual: {str(true_label).lower():5}"
-                    )
+                # else:
+                # print(
+                #    f"Mismatch in {source_file:22} | Event: {event_id:32} | Predicted: {predicted_val.lower():5} | Actual: {str(true_label).lower():5}"
+                # )
 
-    if total > 0:
-        accuracy = (correct / total) * 100
-        print(f"\nResults: {correct}/{total} correct ({accuracy:.2f}%)")
-    else:
-        print("\nWarning: No matching labeled events found.")
+    accuracy = (correct / total) * 100
+    print(f"\nResults: {correct}/{total} correct ({accuracy:.2f}%)")
+    return accuracy
 
 
 # Loads data, runs classification, and checks the accuracy
-def main() -> None:
-
-    target_files = "quench_data_L[0-9].h5"
+def main(parameters: QuenchThresholds) -> float:
+    target_files = "quench_data_L0.h5"
     events_iterator = load_quench_events(target_files)
-    prediction_results = run_classification(events_iterator)
+    prediction_results = run_classification(events_iterator, parameters)
     labeled_file_path = (
-        Path(DATA_DIR) / "quench_data_L0_labeled.h5"
+        Path(DATA_DIR) / "quench_data_L0.h5"
     )  # File path of labeled data to be used for comparison
-    compare_classification(prediction_results, labeled_file_path)
+    accuracy: float = compare_classification(prediction_results, labeled_file_path)
+
+    return accuracy
 
 
 if __name__ == "__main__":

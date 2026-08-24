@@ -3,7 +3,17 @@ from numpy.typing import NDArray
 from enum import Enum
 from typing import Optional
 from dataclasses import dataclass
-import streamlit as st
+
+
+@dataclass
+class QuenchThresholds:
+    """Stores all the variable thresholds for the classifier."""
+
+    overall_avg: float = 0.1
+    pre_wf_min: float = 0.1
+    pre_fwd_min: float = 0.01
+    pre_total_min: float = 0.2
+    tau_multiplier: float = 0.60
 
 
 @dataclass
@@ -32,12 +42,16 @@ def find_quench_time(quench_event_data: QuenchData) -> int:
 
 
 # Verifies that the overall average of the entire fault waveform is greater than the threshold
-def is_overall_average_sufficient(quench_event_data: QuenchData) -> bool:
-    return bool(np.mean(quench_event_data.fault_waveform) > 0.1)
+def is_overall_average_sufficient(
+    quench_event_data: QuenchData, thresholds: QuenchThresholds
+) -> bool:
+    return bool(np.mean(quench_event_data.fault_waveform) > thresholds.overall_avg)
 
 
 # Evaluates the pre-quench window to confirm the cavity is on
-def pre_quench_amplitude(quench_event_data: QuenchData, time_0: int) -> bool:
+def pre_quench_amplitude(
+    quench_event_data: QuenchData, time_0: int, thresholds: QuenchThresholds
+) -> bool:
     pre_quench_window = quench_event_data.fault_waveform[0:time_0]
     avg_waveform = np.mean(pre_quench_window)
 
@@ -46,7 +60,11 @@ def pre_quench_amplitude(quench_event_data: QuenchData, time_0: int) -> bool:
 
     total_avg = (avg_waveform + avg_fwd_power) / 2.0
 
-    return bool((avg_waveform >= 0.1) and (avg_fwd_power > 0.01) and (total_avg > 0.2))
+    return bool(
+        (avg_waveform >= thresholds.pre_wf_min)
+        and (avg_fwd_power > thresholds.pre_fwd_min)
+        and (total_avg > thresholds.pre_total_min)
+    )
 
 
 # Calculates measured decay time and expected theoretical decay constant
@@ -77,13 +95,13 @@ def calculate_decay_metrics(
 
 
 # Determines the operational status of the quench event
-def classify(event_data: QuenchData) -> QuenchStatus:
-    if not is_overall_average_sufficient(event_data):
+def classify(event_data: QuenchData, thresholds: QuenchThresholds) -> QuenchStatus:
+    if not is_overall_average_sufficient(event_data, thresholds):
         return QuenchStatus.cavity_off
 
-    time_0 = find_quench_time(event_data)
+    time_0: int = find_quench_time(event_data)
 
-    if not pre_quench_amplitude(event_data, time_0):
+    if not pre_quench_amplitude(event_data, time_0, thresholds):
         return QuenchStatus.cavity_off
 
     t1, expected_tau = calculate_decay_metrics(event_data, time_0)
@@ -91,51 +109,62 @@ def classify(event_data: QuenchData) -> QuenchStatus:
     if t1 < 0:
         return QuenchStatus.other
 
-    if t1 < 0.60 * expected_tau:
+    if t1 < thresholds.tau_multiplier * expected_tau:
         return QuenchStatus.real
 
-    if t1 >= 0.60 * expected_tau:
+    if t1 >= thresholds.tau_multiplier * expected_tau:
         return QuenchStatus.false
 
     return QuenchStatus.other
 
-def compute_suggestion(signal_data, frequency, saved_q_loaded):
-    """Compute the classification suggestion using the classify system written by Norah"""
 
-    # If there is no fault_waveform, we are unable to classify 
+def compute_suggestion(
+    signal_data, frequency, saved_q_loaded, thresholds: QuenchThresholds | None = None
+):
+    """Compute the classification suggestion using the configured thresholds."""
+
+    # If no thresholds are provided, fall back to the default values
+    if thresholds is None:
+        thresholds = QuenchThresholds()
+
+    # If there is no fault_waveform, we are unable to classify
     if "fault_waveform" not in signal_data:
         return None
 
-    x_fault, y_fault = signal_data["fault_waveform"]    # Split the fault_waveform (time, amplitude) tuple into two separate arrays
+    x_fault, y_fault = signal_data["fault_waveform"]
 
-    # If the forward_power is missing, we can't run the classifier 
+    # If the forward_power is missing, we can't run the classifier
     if "forward_power" not in signal_data:
         return None
-    x_fwd, y_fwd = signal_data["forward_power"]     # Split the forward_power (time, amplitude) tuple into two separate arrays
 
-    # reverse_power may or may not exist, if missing assign none to the time and amplitude 
+    x_fwd, y_fwd = signal_data["forward_power"]
+
+    # reverse_power may or may not exist, if missing assign none to the time and amplitude
     x_rev, y_rev = signal_data.get("reverse_power", (None, None))
 
     try:
-        # Build the QuenchData object 
-        # Convert every array into float for safer math calculations 
+        # Build the QuenchData object
         quench_event = QuenchData(
-            fault_time=np.asarray(x_fault, dtype=float),    
-            fault_waveform=np.asarray(y_fault, dtype=float), 
+            fault_time=np.asarray(x_fault, dtype=float),
+            fault_waveform=np.asarray(y_fault, dtype=float),
             forward_power=np.asarray(y_fwd, dtype=float),
             forward_time=np.asarray(x_fwd, dtype=float),
-            reverse_power=np.asarray(y_rev, dtype=float) if y_rev is not None else np.array([]), # Reverse power amplitude if available, else an empty array
-            reverse_time=np.asarray(x_rev, dtype=float) if x_rev is not None else np.array([]), # Reverse time if available, else an empty array
+            reverse_power=np.asarray(y_rev, dtype=float)
+            if y_rev is not None
+            else np.array([]),
+            reverse_time=np.asarray(x_rev, dtype=float)
+            if x_rev is not None
+            else np.array([]),
         )
-       
+
         if frequency is not None:
-            # Convert frequency into numpy no matter what type of data it came in 
             quench_event.frequency = float(np.asarray(frequency).flat[0])
         if saved_q_loaded is not None:
-            # Convert saved_q_loaded into numpy no matter what type of data it came in 
             quench_event.saved_q_loaded = float(np.asarray(saved_q_loaded).flat[0])
 
-        return classify(quench_event)  # Calls classify function which returns a QuenchStatus [real, false, other or cavoty off]
-    except Exception as e :
-        st.error(f"Classification suggestion has failed: {e}")
+        return classify(quench_event, thresholds)
+
+    except Exception as e:
+        # Replaced st.error to keep logic.py framework-agnostic
+        print(f"Classification suggestion has failed: {e}")
         return None
